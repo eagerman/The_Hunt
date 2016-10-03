@@ -14,15 +14,17 @@ void allLandLocs (int whereToGo[]);
 void getHuntLoc (DracView dv, int *huntArray); 
 void avoidHunterLoc (DracView dv, int whereToGo[], int *hunterLocation, 
                      int *numLocPtr); 
+int hideInTrail (DracView dv);
+int dbInTrail (DracView dv); 
 
 void decideDraculaMove(DracView gameState)
 { 
-    roundNum = giveMeTheRound(gameState); //DracView.h
+    Round roundNum = giveMeTheRound(gameState); //DracView.h
     
     if (roundNum == 0) {
         char *DracMove = firstMove(gameState);
     else {
-        otherDracMove = otherMove(gameState); 
+        char *otherDracMove = otherMove(gameState); 
         // BFS search for furthest location away from the nearest hunter  
     }
 	registerBestPlay(DracMove, "WASSUP WASSUP WASSUP WASSUP WASSUP");
@@ -98,3 +100,48 @@ void avoidHunterLoc (DracView dv, int whereToGo[], int *hunterLocation,
     }
 }
 
+// pre: takes the dv and the location of drac 
+// post: finds best next move for drac by returning a string 
+char *otherMove(DracView dv, LocationID dracLoc) {
+    // initialise pointer to store the number of locations Drac can go
+    int x, y; 
+    int *numWhereCanILand, *numWhereCanISea;
+    numWhereCanILand = &x; numWhereCanISea = &y; //they pt data in x & y 
+    // store these locations in an array for Land and sea locations
+    LocationID *whereCanILand = whereCanIgo(dv, numWhereCanILand, TRUE, FALSE);          
+    LocationID *whereCanISea= whereCanIgo(dv, numWhereCanISea, FALSE, TRUE);
+ 
+    // see whether hide or DB is in trail TRUE or FALSE 
+    int hide = hideInTrail(dv);
+    int DB = dbInTrail(dv);
+
+    // Do something w/ above info to find best next move  
+}
+
+int hideInTrail(DracView dv) {
+    int result = FALSE; 
+    // initialise and fill array with trail locations 
+    int trail[TRAIL_SIZE];
+    giveMeTheTrail(dv, PLAYER_DRACULA, trail); 
+    // go through the array and see if there is HIDE;
+    for (int i = 0, i < TRAIL_SIZE; i++) {
+        if (trail[i] == HIDE) {
+            result = TRUE; 
+        }
+    }
+    return result; 
+}
+
+int dbInTrail(DracView dv) {
+    int result = FALSE; 
+    // initialise and fill array with trail locations 
+    int trail[TRAIL_SIZE];
+    giveMeTheTrail(dv, PLAYER_DRACULA, trail); 
+    // go through the array and see if there is DB;
+    for (int i = 0, i < TRAIL_SIZE; i++) {
+        if ((trail[i] >= DOUBLE_BACK_1) && 
+            (trail[i] <= DOUBLE_BACK_5)) {
+            result = TRUE; 
+        } 
+}
+ 
