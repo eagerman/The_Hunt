@@ -109,7 +109,8 @@ char *otherMove(DracView dv, LocationID dracLoc) {
     int *numWhereCanILand, *numWhereCanISea;
     numWhereCanILand = &x; numWhereCanISea = &y; //they pt data in x & y 
     // store these locations in an array for Land and sea locations
-    LocationID *whereCanILand = whereCanIgo(dv, numWhereCanILand, TRUE, FALSE);          
+    LocationID *whereCanILand = whereCanIgo(dv, numWhereCanILand, TRUE, FALSE);
+   
     LocationID *whereCanISea= whereCanIgo(dv, numWhereCanISea, FALSE, TRUE);
     LocationID myLoc = whereIs(dv, PLAYER_DRACULA); 
     int myLocType = idToType(myLoc); 
@@ -139,33 +140,45 @@ char *otherMove(DracView dv, LocationID dracLoc) {
                 } else if (whereCanILand[i] = ST_JOSEPH_AND_ST_MARYS) {
                     whereCanILand[i] = -1; 
                 } else if ((DB == FALSE) && myLocType != SEA) { 
-                    switch (inTrail) {
-                        case '1': 
-                            whereCanILand[i] = DOUBLE_BACK_1;
-                            break;
-                        case '2': 
-                            whereCanILand[i] = DOUBLE_BACK_2;
-                            break;
-                        case '3': 
-                            whereCanILand[i] = DOUBLE_BACK_3;
-                            break;
-                        case '4': 
-                            whereCanILand[i] = DOUBLE_BACK_4;
-                            break;
-                        case '5': 
-                            whereCanILand[i] = DOUBLE_BACK_5;
-                            break;
-                    }
+                    whereCanILand[i] = getDB(inTrail); 
                 } else if (DB == TRUE) { // cannot DB
                     whereCanILand[i] = -1; 
                 }
             } else { /* not in trail*/ }
-        } // now our array has all legal moves 
+        } // now our LAND array has all legal moves 
+        // write function to copy possible legal moves to new array
     } else {  
-        // if no land locations locations
-        // Drac can either go to SEA or TP  
-                
-    } 
+        LocationID newLoc; 
+        // if only ONE land location
+        if ((*numWhereCanILand == 0) && (myLocType == SEA)) {
+            // no land loc and at sea therefore only TP or Sea available
+            newLoc = TPorSea(*numWhereCanISea, whereCanISea);   
+        } else if (*numWhereCanILand == 1){
+            // only one land loc then choose that one
+            newLoc = whereCanILand[0];
+            if (newLoc == ST_JOSEPH_AND_ST_MARYS) newLoc = TELEPORT; 
+        } else {
+            newLoc = TPorSea(*numWhereCanISea, whereCanISea); 
+        }
+        
+        // after we make the only move our next Location we must check
+        // whether it is inTrail and whether we can HIDE or DB
+        // if we can HIDE or DB we should. 
+        inTrail = checkInTrail(newLoc, trail);
+        if (inTrail = -1) { // no need to do anything
+        } else if (inTrail >= 0) { 
+            if (inTrail == 0) { // if newLoc is first in 
+                if (hide == FALSE) newLoc = HIDE; 
+                else if (DB == FALSE) newLoc = DOUBLE_BACK_1; 
+                else newLoc = TPorSea(*numWhereCanISea, whereCanISea); 
+            } else if (DB == FALSE) {newLoc = getDB(inTrail);}   
+        }
+    }
+    char *otherMove = idToAbbrev(newLoc); 
+    free(whereCanILand); 
+    free(whereCanISea); 
+
+    return otherMove;  
 }
 
 
@@ -207,3 +220,27 @@ int checkInTrail(LocationID newLocation, LocationID trail[TRAIL_SIZE]){
     }
     return inTrail;  
 } 
+
+
+// gets double back in trail 
+int getDB (int inTrail) {
+    int DB; 
+    switch (inTrail) {
+        case '1': 
+            whereCanILand[i] = DOUBLE_BACK_1;
+            break;
+        case '2': 
+            whereCanILand[i] = DOUBLE_BACK_2;
+            break;
+        case '3': 
+            whereCanILand[i] = DOUBLE_BACK_3;
+            break;
+        case '4': 
+            whereCanILand[i] = DOUBLE_BACK_4;
+            break;
+        case '5': 
+            whereCanILand[i] = DOUBLE_BACK_5;
+            break;
+    }
+    return DB;
+}
