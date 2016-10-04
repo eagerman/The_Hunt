@@ -54,7 +54,7 @@ char *firstMove (DracView gameState) {
         rand = rand() % 71;
     }
     // if whereToGo[rand] == 1 then make that the new location
-    int newLocation = rand;
+    int newLoc = rand;
     char *firstMove = idToAbrrev(newLocation);  
     free(hunterLoc); 
     //I don't think we need to free numLov etc b/c we might use them again
@@ -87,7 +87,7 @@ void getHuntLoc (DracView dv, int *huntArray) {
 // pre: takes an array int of where to go
 // post: removes places where hunters are and where they can go by making == 0
 void avoidHunterLoc (DracView dv, int whereToGo[], int *hunterLocation, 
-                  int *numLocPtr) {
+                     int *numLocPtr) {
     LocationID *whereCanHunterGo; 
     for (int i = 0; i < NUM_HUNTERS; i++) {
         // make location of each hunter not an option
@@ -111,13 +111,63 @@ char *otherMove(DracView dv, LocationID dracLoc) {
     // store these locations in an array for Land and sea locations
     LocationID *whereCanILand = whereCanIgo(dv, numWhereCanILand, TRUE, FALSE);          
     LocationID *whereCanISea= whereCanIgo(dv, numWhereCanISea, FALSE, TRUE);
+    LocationID myLoc = whereIs(dv, PLAYER_DRACULA); 
+    int myLocType = idToType(myLoc); 
  
     // see whether hide or DB is in trail TRUE or FALSE 
     int hide = hideInTrail(dv);
     int DB = dbInTrail(dv);
 
-    // Do something w/ above info to find best next move  
+    // initialising Drac's trail by putting into an array 
+    LocationID trail[TRAIL_SIZE]; 
+    giveMeTheTrail(dv, PLAYER_DRACULA, trail); 
+
+    // remove moves that are not possible in whereCanILand 
+    // then do a BFS to find furthest location from the hunters 
+    if (*numWhereCanILand > 1) {
+        int inTrail = -1; //this tells us if in trail
+        for (int i = 0; i < *numWhereCanILand; i++) {
+            inTrail = checkInTrail(whereCanILand[i], trail); 
+            if (inTrail >= 0) {
+                if ((whereCanILand[i] == myLoc) && (hide == FALSE) 
+                    && (myLocType != SEA)) { 
+                    // no hide and not at sea then you can hide 
+                    whereCanILand[i] = HIDE; 
+                } else if ((whereCanILand[i] == myLoc) && (hide == TRUE)) { 
+                    // if hide true then cannot hide 
+                    whereCanILand[i] = -1; //cannot HIDE 
+                } else if (whereCanILand[i] = ST_JOSEPH_AND_ST_MARYS) {
+                    whereCanILand[i] = -1; 
+                } else if ((DB == FALSE) && myLocType != SEA) { 
+                    switch (inTrail) {
+                        case '1': 
+                            whereCanILand[i] = DOUBLE_BACK_1;
+                            break;
+                        case '2': 
+                            whereCanILand[i] = DOUBLE_BACK_2;
+                            break;
+                        case '3': 
+                            whereCanILand[i] = DOUBLE_BACK_3;
+                            break;
+                        case '4': 
+                            whereCanILand[i] = DOUBLE_BACK_4;
+                            break;
+                        case '5': 
+                            whereCanILand[i] = DOUBLE_BACK_5;
+                            break;
+                    }
+                } else if (DB == TRUE) { // cannot DB
+                    whereCanILand[i] = -1; 
+                }
+            } else { /* not in trail*/ }
+        } // now our array has all legal moves 
+    } else {  
+        // if no land locations locations
+        // Drac can either go to SEA or TP  
+                
+    } 
 }
+
 
 int hideInTrail(DracView dv) {
     int result = FALSE; 
@@ -145,4 +195,15 @@ int dbInTrail(DracView dv) {
             result = TRUE; 
         } 
 }
- 
+
+
+// checks where LocationID is in trial, if not return -1 
+int checkInTrail(LocationID newLocation, LocationID trail[TRAIL_SIZE]){
+    int inTrail = -1; // by default not in trial 
+    for (int i = 0; i < TRAIL_SIZE; i++) {
+        if ((trail[i] == newLocation) && (trail[i] != UNKNOWN_LOCATION)){
+            inTrail = i; 
+            break;  
+    }
+    return inTrail;  
+} 
