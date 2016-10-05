@@ -49,6 +49,8 @@ char *firstMove (DracView gameState) {
     // make loc of each hunters && loc each hunter can go == 0  
     avoidHunterLoc (gameState, whereToGo, *huntLoc, numLocPtr); 
     // any other places Drac cannot go in the first turn??? 
+    time_t t; 
+    srand ((unsigned) time(&t)); 
     int rand = rand() % 71; // rand() % NUM_MAP_LOCATIONS 
     while (whereToGo[rand] == 0) {
         rand = rand() % 71;
@@ -124,7 +126,7 @@ char *otherMove(DracView dv, LocationID dracLoc) {
     giveMeTheTrail(dv, PLAYER_DRACULA, trail); 
 
     // remove moves that are not possible in whereCanILand 
-    // then do a BFS to find furthest location from the hunters 
+    // OR just select a random move from the array if no time. 
     if (*numWhereCanILand > 1) {
         int inTrail = -1; //this tells us if in trail
         for (int i = 0; i < *numWhereCanILand; i++) {
@@ -132,7 +134,7 @@ char *otherMove(DracView dv, LocationID dracLoc) {
             if (inTrail >= 0) {
                 if ((whereCanILand[i] == myLoc) && (hide == FALSE) 
                     && (myLocType != SEA)) { 
-                    // no hide and not at sea then you can hide 
+                    // no hide in trail and not at sea then you can hide 
                     whereCanILand[i] = HIDE; 
                 } else if ((whereCanILand[i] == myLoc) && (hide == TRUE)) { 
                     // if hide true then cannot hide 
@@ -145,11 +147,35 @@ char *otherMove(DracView dv, LocationID dracLoc) {
                     whereCanILand[i] = -1; 
                 }
             } else { /* not in trail*/ }
-        } // now our LAND array has all legal moves 
-        // write function to copy possible legal moves to new array
-    } else {  
+        } // now our LAND array has illegal and legal moves 
+
+        // We are now creating an array of ONLY legal moves 
+        // Counting legal possible moves
+        int ctr = 0; 
+        for (int j = 0; j < *numWhereCanILand; j++) {
+            if (whereCanILand[ctr] != -1) ctr++; 
+            j++; 
+        } 
+        // create array that stores legal moves
+        // do we have to do [ctr+1] ??????????
+        LocationID legalMoves[ctr]; int k = 0; 
+        for (j = 0; j < *numWhereCanILand; j++) {
+            if (whereCanILand[j] != -1) {
+                legalMoves[k] = whereCanILand[j];  
+                k++; 
+            } 
+            j++; 
+        }
+        // select random move (because cbb breadth first search) 
+        int random = rand() % ctr; 
+        char* otherMove = idToAbbrev(legalMoves[random]); 
+        free(whereCanILand);
+        free(whereCanISea); 
+
+        return otherMove;
+
+    } else { // case: only ONE or ZERO land location 
         LocationID newLoc; 
-        // if only ONE land location
         if ((*numWhereCanILand == 0) && (myLocType == SEA)) {
             // no land loc and at sea therefore only TP or Sea available
             newLoc = TPorSea(*numWhereCanISea, whereCanISea);   
@@ -161,16 +187,16 @@ char *otherMove(DracView dv, LocationID dracLoc) {
             newLoc = TPorSea(*numWhereCanISea, whereCanISea); 
         }
         
-        // after we make the only move our next Location we must check
+        // We must now check this location 
         // whether it is inTrail and whether we can HIDE or DB
         // if we can HIDE or DB we should. 
         inTrail = checkInTrail(newLoc, trail);
         if (inTrail = -1) { // no need to do anything
         } else if (inTrail >= 0) { 
             if (inTrail == 0) { // if newLoc is first in 
-                if (hide == FALSE) newLoc = HIDE; 
-                else if (DB == FALSE) newLoc = DOUBLE_BACK_1; 
-                else newLoc = TPorSea(*numWhereCanISea, whereCanISea); 
+                if (hide == FALSE) {newLoc = HIDE;} 
+                else if (DB == FALSE) {newLoc = {DOUBLE_BACK_1;} //Not sure 
+                else newLoc = {TPorSea(*numWhereCanISea, whereCanISea);} 
             } else if (DB == FALSE) {newLoc = getDB(inTrail);}   
         }
     }
@@ -243,4 +269,20 @@ int getDB (int inTrail) {
             break;
     }
     return DB;
+}
+
+
+LocationID TPorSea (int numWhereCanISea, int whereCanISea[]) {
+    int newLoc; 
+    if (numWhereCanISea == 0) {
+        // if no sea loc then only TP 
+        newLoc = TELEPORT; 
+    } else {
+        // initialise random num generator
+        // and choose random sea loc 
+        time_t t; 
+        srand((unsigned) time(&t)); 
+        i = rand() % numWhereCanISea; 
+        newLoc = whereCanISea[i];
+    }
 }
