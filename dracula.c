@@ -6,28 +6,37 @@
 #include "Game.h"
 #include "DracView.h"
 #include "Places.h"
+#include "time.h"
 
 #define NUM_HUNTERS 4
 #define TRAIL_SIZE 6
 
 char *firstMove (DracView gameState); 
 void allLandLocs (int whereToGo[]);
-void getHuntLoc (DracView dv, int *huntArray); 
-void avoidHunterLoc (DracView dv, int whereToGo[], int *hunterLocation, 
+void getHuntLoc (DracView dv, int huntArray[]); 
+void avoidHunterLoc (DracView dv, int whereToGo[], int hunterLocation[], 
                      int *numLocPtr); 
 int hideInTrail (DracView dv);
 int dbInTrail (DracView dv); 
+char *otherMove(DracView dv);
+int hideInTrail(DracView dv); 
+int dbInTrail(DracView dv);
+int checkInTrail(LocationID newLocation, LocationID trail[TRAIL_SIZE]);
+int getDB (int inTrail);
+LocationID TPorSea (int numWhereCanISea, int whereCanISea[]);
 
 void decideDraculaMove(DracView gameState)
 { 
     Round roundNum = giveMeTheRound(gameState); //DracView.h
     
+	char *dracMove;
+
     if (roundNum == 0) {
-        char *dracMove = firstMove(gameState);
+        dracMove = firstMove(gameState);
     } else {
         // otherMove() strategy: choose random move 
         // we should do a BFS when we have more time 
-        char *dracMove = otherMove(gameState); 
+        dracMove = otherMove(gameState); 
     }
 	registerBestPlay(dracMove, "WASSUP WASSUP WASSUP WASSUP WASSUP");
 }
@@ -39,28 +48,37 @@ char *firstMove (DracView gameState) {
     int *numLocPtr = &numLoc; 
     // create an array for locations Drac can go
     int whereToGo[NUM_MAP_LOCATIONS];
+
     //put all land locations into whereToGo 
     allLandLocs (whereToGo);
+
     // he cannot go to CASTLE_DRACULA or ST_MARY hospital
     whereToGo[CASTLE_DRACULA] = 0;
     whereToGo[ST_JOSEPH_AND_ST_MARYS] = 0;
+
     // store the current location of each hunter in an array 
-    int *huntLoc[NUM_HUNTERS];
+    int huntLoc[NUM_HUNTERS];
     getHuntLoc (gameState, huntLoc); 
+
     // make loc of each hunters && loc each hunter can go == 0  
-    avoidHunterLoc (gameState, whereToGo, *huntLoc, numLocPtr); 
-    // any other places Drac cannot go in the first turn??? 
+    avoidHunterLoc (gameState, whereToGo, huntLoc, numLocPtr); 
+
+    // any other places Drac cannot go in the first turn???
+	// choosing a random first move 
     time_t t; 
     srand ((unsigned) time(&t)); 
-    int rand = rand() % 71; // rand() % NUM_MAP_LOCATIONS 
-    while (whereToGo[rand] == 0) {
-        rand = rand() % 71;
+    int random = rand() % 72; // we used 72 b/c of 71 locations 
+    
+	while (whereToGo[random] == 0) {
+        random = rand() % 72;
     }
+
     // if whereToGo[rand] == 1 then make that the new location
-    int newLoc = rand;
-    char *firstMove = idToAbrrev(newLocation);  
-    free(hunterLoc); 
-    //I don't think we need to free numLov etc b/c we might use them again
+    int newLoc = random;
+    char *firstMove = idToAbrrev(newLoc);  
+    
+	free(huntLoc); 
+
     return firstMove;
 }
 
@@ -82,14 +100,14 @@ void allLandLocs (int whereToGo[]) {
 
 // pre: takes an int array with space to store loc of each hunter
 // post: finds their location and puts it into the array
-void getHuntLoc (DracView dv, int *huntArray) { 
+void getHuntLoc (DracView dv, int huntArray[]) { 
     for (int i = 0; i < NUM_HUNTERS; i++) 
         huntArray[i] = whereIs (dv, i); 
 } 
 
 // pre: takes an array int of where to go
 // post: removes places where hunters are and where they can go by making == 0
-void avoidHunterLoc (DracView dv, int whereToGo[], int *hunterLocation, 
+void avoidHunterLoc (DracView dv, int whereToGo[], int hunterLocation[], 
                      int *numLocPtr) {
     LocationID *whereCanHunterGo; 
     for (int i = 0; i < NUM_HUNTERS; i++) {
@@ -106,7 +124,7 @@ void avoidHunterLoc (DracView dv, int whereToGo[], int *hunterLocation,
 
 // pre: takes the dv and the location of drac 
 // post: finds best next move for drac by returning a string 
-char *otherMove(DracView dv, LocationID dracLoc) {
+char *otherMove(DracView dv) {
     // initialise pointer to store the number of locations Drac can go
     int x, y; 
     int *numWhereCanILand, *numWhereCanISea;
@@ -287,3 +305,52 @@ LocationID TPorSea (int numWhereCanISea, int whereCanISea[]) {
         newLoc = whereCanISea[i];
     }
 }
+
+// converts ID (number) to abbreviation which are two characters
+char *idToAbbrev (LocationID id) {
+	chart *abbrev;
+	
+	//check struct in Places.c and Places.h for clarification
+	if ((id >= 0) && (id <= 70)) {
+		abbrev = places[id]->abbrev; 
+	} else if (id == 100 {
+		abbrev = "C?"; //CITY_UNKNOWN 
+	} else if (id == 101) {
+		abbrev = "S?"; //SEA_UNKNOWN
+	} else if (id == 102) {
+		abbrev = "HI"; 
+	} else if (id == 103) {
+		abbrev = "D1"; 
+	} else if (id == 104) {
+		abbrev = "D2"; 
+	} else if (id == 105) {
+		abbrev = "D3"; 
+	} else if (id == 106) {
+		abbrev = "D4";
+	} else if (id == 107) {
+		abbrev = "D5";
+	} else if (id == 108) {
+		abbrev = "TP"; 
+	} else { //something went wrong
+		printf("Something fked up\n"); 
+		name = "?";
+	}
+	return name; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
