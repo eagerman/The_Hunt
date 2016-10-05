@@ -23,12 +23,13 @@ void decideDraculaMove(DracView gameState)
     Round roundNum = giveMeTheRound(gameState); //DracView.h
     
     if (roundNum == 0) {
-        char *DracMove = firstMove(gameState);
-    else {
-        char *otherDracMove = otherMove(gameState); 
-        // BFS search for furthest location away from the nearest hunter  
+        char *dracMove = firstMove(gameState);
+    } else {
+        // otherMove() strategy: choose random move 
+        // we should do a BFS when we have more time 
+        char *dracMove = otherMove(gameState); 
     }
-	registerBestPlay(DracMove, "WASSUP WASSUP WASSUP WASSUP WASSUP");
+	registerBestPlay(dracMove, "WASSUP WASSUP WASSUP WASSUP WASSUP");
 }
 
 
