@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "Game.h"
 #include "DracView.h"
-#include "Places,h"
+#include "Places.h"
 
 #define NUM_HUNTERS 4
 #define TRAIL_SIZE 6
