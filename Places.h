@@ -129,6 +129,9 @@ int nameToID(char *name);
 // given a Place abbreviation, return its ID number
 int abbrevToID(char *abbrev);
 
+// given a ID number, give back abbreviation name
+char *idToAbbrev (LocationID id); 
+
 #define isLand(place)  (idToType(place) == LAND)
 #define isSea(place)  (idToType(place) == SEA)
 

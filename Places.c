@@ -1,5 +1,6 @@
 // Places.c ... implementation of Places
 
+#include <stdio.h> 
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -8,7 +9,7 @@
 typedef struct Place {
    char      *name;
    char      *abbrev;
-   LocationID id;
+   LocationID id;  //int
    PlaceType  type;
 } Place;
 
@@ -136,3 +137,36 @@ int abbrevToID(char *abbrev)
    }
    return NOWHERE;
 }
+
+// converts ID (number) to abbreviation which are two characters
+char *idToAbbrev (LocationID id) {
+	char *abbrv;
+	//assert (validPlace(p));
+	//check struct in Places.c and Places.h for clarification
+	if ((id >= 0) && (id <= 70)) {
+		abbrv = places[id].abbrev; 
+	} else if (id == 100) {
+		abbrv = "C?"; //CITY_UNKNOWN 
+	} else if (id == 101) {
+		abbrv = "S?"; //SEA_UNKNOWN
+	} else if (id == 102) {
+		abbrv = "HI"; 
+	} else if (id == 103) {
+		abbrv = "D1"; 
+	} else if (id == 104) {
+		abbrv = "D2"; 
+	} else if (id == 105) {
+		abbrv = "D3"; 
+	} else if (id == 106) {
+		abbrv = "D4";
+	} else if (id == 107) {
+		abbrv = "D5";
+	} else if (id == 108) {
+		abbrv = "TP"; 
+	} else { //something went wrong
+		printf("Something fked up\n"); 
+		abbrv = "??";
+	}
+	return abbrv; 
+}
+
