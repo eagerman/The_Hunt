@@ -1,7 +1,7 @@
 # Makefile for "Fury of Dracula": The Hunt
 
 # change these to suit your local C environment
-CC = gcc -std=c99
+CC = gcc # -std=c99
 CFLAGS = -Wall -Werror
 # do not change the following line
 BINS = dracula hunter

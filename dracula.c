@@ -111,14 +111,16 @@ void getHuntLoc (DracView dv, int huntArray[]) {
 // post: removes places where hunters are and where they can go by making == 0
 void avoidHunterLoc (DracView dv, int whereToGo[], int huntLocation[], 
                      int *numLocPtr) {
-    LocationID *whereCanHunterGo; 
-    for (int i = 0; i < NUM_HUNTERS; i++) {
+    LocationID *whereCanHunterGo;
+    int i; 
+    for (i = 0; i < NUM_HUNTERS; i++) {
         // make location of each hunter not an option
         whereToGo[huntLocation[i]] = 0; 
         // create an a LocationID * array with loc where hunt can go
         whereCanHunterGo = whereCanTheyGo (dv, numLocPtr, i, TRUE, TRUE, TRUE);
         // delete data in whereToGo that corresponds to where a hunter can go
-        for (int j = 0; j < *numLocPtr; j++) {
+        int j;
+        for (j = 0; j < *numLocPtr; j++) {
             whereToGo[whereCanHunterGo[j]] = 0;
         } 
     }
@@ -151,7 +153,8 @@ char *otherMove(DracView dv) {
     // OR just select a random move from the array if no time. 
     if (*numWhereCanILand > 1) {
         int inTrail = -1; //this tells us if in trail
-        for (int i = 0; i < *numWhereCanILand; i++) {
+        int i;
+        for (i = 0; i < *numWhereCanILand; i++) {
             inTrail = checkInTrail(whereCanILand[i], trail); 
             if (inTrail >= 0) {
                 if ((whereCanILand[i] == myLoc) && (hide == FALSE) 
@@ -174,14 +177,16 @@ char *otherMove(DracView dv) {
         // We are now creating an array of ONLY legal moves 
         // Counting legal possible moves
         int ctr = 0; 
-        for (int j = 0; j < *numWhereCanILand; j++) {
+        int j;
+        for (j = 0; j < *numWhereCanILand; j++) {
             if (whereCanILand[ctr] != -1) ctr++; 
             j++; 
         } 
         // create array that stores legal moves
         // do we have to do [ctr+1] ??????????
         LocationID legalMoves[ctr]; int k = 0; 
-        for (int j = 0; j < *numWhereCanILand; j++) {
+        //int j;
+        for (j = 0; j < *numWhereCanILand; j++) {
             if (whereCanILand[j] != -1) {
                 legalMoves[k] = whereCanILand[j];  
                 k++; 
@@ -235,7 +240,8 @@ int hideInTrail(DracView dv) {
     int trail[TRAIL_SIZE];
     giveMeTheTrail(dv, PLAYER_DRACULA, trail); 
     // go through the array and see if there is HIDE;
-    for (int i = 0; i < TRAIL_SIZE; i++) {
+    int i;
+    for (i = 0; i < TRAIL_SIZE; i++) {
         if (trail[i] == HIDE) {
             result = TRUE; 
         }
@@ -249,7 +255,8 @@ int dbInTrail(DracView dv) {
     int trail[TRAIL_SIZE];
     giveMeTheTrail(dv, PLAYER_DRACULA, trail); 
     // go through the array and see if there is DB;
-    for (int i = 0; i < TRAIL_SIZE; i++) {
+    int i;
+    for (i = 0; i < TRAIL_SIZE; i++) {
         if ((trail[i] >= DOUBLE_BACK_1) && 
             (trail[i] <= DOUBLE_BACK_5)) {
             result = TRUE; 
@@ -262,7 +269,8 @@ int dbInTrail(DracView dv) {
 // checks where LocationID is in trial, if not return -1 
 int checkInTrail(LocationID newLocation, LocationID trail[TRAIL_SIZE]){
     int inTrail = -1; // by default not in trial 
-    for (int i = 0; i < TRAIL_SIZE; i++) {
+    int i;
+    for (i = 0; i < TRAIL_SIZE; i++) {
         if ((trail[i] == newLocation) && (trail[i] != UNKNOWN_LOCATION)){
             inTrail = i; 
             break;  
