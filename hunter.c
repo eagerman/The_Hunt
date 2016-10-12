@@ -1,25 +1,42 @@
 // hunter.c
 // Implementation of your "Fury of Dracula" hunter AI
 
+
+    /*
+	// Psuedo Code
+   foreach (move in possibleMoves(gameState)) {
+      worth = evaluateMove(move, gameState);
+      if (worth > threshold)
+         registerBestPlay(move,Message);
+      if (worth > bestWorth)
+         { bestWorth = worth;  bestMove = move; }
+   }
+   registerBestPlay(bestMove,Message);
+   */
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include "Game.h"
 #include "HunterView.h"
 
+int traceDrac();
+void resetAllHunters();
+
 void decideHunterMove(HunterView gameState)
 {
 	// TODO ...
     // Replace the line below by something better
-     srand (time(NULL));
+    // srand (time(NULL));
 	int round = giveMeTheRound(gameState);
     int player = whoAmI(gameState);
 	int numLocations = NUM_MAP_LOCATIONS;
     LocationID *possibleMoves;
 	possibleMoves = (LocationID *)(malloc(sizeof(LocationID)*NUM_MAP_LOCATIONS));
 	int bestMove = 0;
-    
-  
+	char *move;
+
     if(round == 0){
         if(player == PLAYER_LORD_GODALMING) { 
             registerBestPlay("GE", "Godalming Here"); 
@@ -34,7 +51,6 @@ void decideHunterMove(HunterView gameState)
 		int i = 0; 
 		for (i = 0; i < NUM_MAP_LOCATIONS; i++){
 			possibleMoves[i] = -1;
-			printf ("%d ", possibleMoves [i] );
 
 		} 
 		possibleMoves = whereCanIgo(gameState, &numLocations, TRUE, TRUE, TRUE);
@@ -46,7 +62,7 @@ void decideHunterMove(HunterView gameState)
 		for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
 			if (possibleMoves[i] != currLoc) {
 				bestMove = possibleMoves[i];
-				char *move = idToAbbrev(bestMove);
+				move = idToAbbrev(bestMove);
 				if(player == PLAYER_LORD_GODALMING) { 
 		            registerBestPlay(move, "Godalming Here"); 
 		        } else if (player == PLAYER_DR_SEWARD) {
@@ -56,14 +72,29 @@ void decideHunterMove(HunterView gameState)
 		        } else if(player == PLAYER_MINA_HARKER) {
 		            registerBestPlay(move, "Harker Here");
 		        }
-				//registerBestPlay(idToAbbrev(bestMove), ""); 
 				return;
 			}
 			i++;
 		}
 
+   		// we can reveal Dracula's 6th move after round 5, if we rest all the hunters
+		if ( round == 5 ){
+			//rest the hunters
+			resetAllHunters();
+			bestMove = traceDrac();
+		}
+
 		free (possibleMoves);
     }
-	
+}
 
+int traceDrac(){
+	//TODO
+	// replace this code
+	// find 
+	return 0;
+}
+
+void resetAllHunters(){
+	//TODO
 }
