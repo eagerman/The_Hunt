@@ -22,13 +22,12 @@ char *otherMove(DracView dv);
 int hideInTrail(DracView dv); 
 int dbInTrail(DracView dv);
 int checkInTrail(LocationID newLocation, LocationID trail[TRAIL_SIZE]);
-int getDB (int inTrail, LocationID whereCanILand);
+int getDB (int trailIndex, LocationID whereCanILand);
 LocationID TPorSea (int numWhereCanISea, int whereCanISea[]);
 
 void decideDraculaMove(DracView gameState)	
 { 
     Round roundNum = giveMeTheRound(gameState); //DracView.h
-    printf("This is round %d\n", roundNum);
 	char *dracMove;
 
     if (roundNum == 0) {
@@ -45,7 +44,6 @@ void decideDraculaMove(DracView gameState)
 
 
 char *firstMove (DracView gameState) {
-    		printf ("debug1\n"); 
     int numLoc = 0; 
     int *numLocPtr = &numLoc; 
     // create an array for locations Drac can go
@@ -154,40 +152,38 @@ char *otherMove(DracView dv) {
     // OR just select a random move from the array if no time. 
 
     if (*numWhereCanILand > 1) {
-        int inTrail = -1; //this tells us if in trail
+        int trailIndex = -1; //this tells us if in trail
         int i;
         for (i = 0; i < *numWhereCanILand; i++) {
-					printf ("debug1\n"); 
-            inTrail = checkInTrail(whereCanILand[i], trail); 
+            trailIndex = checkInTrail(whereCanILand[i], trail); 
 
-            if (inTrail >= 0) {
+            if (trailIndex >= 0) {
                 if ((whereCanILand[i] == myLoc) && (hide == FALSE) 
                     && (myLocType != SEA)) { 
-					printf ("landing location = %s\n", idToAbbrev(whereCanILand[i])); 
+					printf ("Current Location = %s\n", idToAbbrev(whereCanILand[i])); 
                     // no hide in trail and not at sea then you can hide 
                     whereCanILand[i] = HIDE; 
                 } else if ((whereCanILand[i] == myLoc) && (hide == TRUE)) { 
                     // if hide true then cannot hide 
                     whereCanILand[i] = -1; //cannot HIDE 
-					printf ("landing location = %s\n", idToAbbrev(whereCanILand[i])); 
+					printf ("Current Location = %s\n", idToAbbrev(whereCanILand[i])); 
                 } else if (whereCanILand[i] == ST_JOSEPH_AND_ST_MARYS) {
-					printf ("landing location = %s\n", idToAbbrev(whereCanILand[i])); 
+					printf ("Current Location = %s\n", idToAbbrev(whereCanILand[i])); 
                     whereCanILand[i] = -1; 
                 } else if ((DB == FALSE) && myLocType != SEA) { 
-					printf ("landing location = %s\n", idToAbbrev(whereCanILand[i])); 
-                    getDB(inTrail, whereCanILand[i]); 
+					printf ("Current Location = %s\n", idToAbbrev(whereCanILand[i])); 
+                    getDB(trailIndex, whereCanILand[i]); 
                 } else if (DB == TRUE) { // cannot DB
-					printf ("landing location = %s\n", idToAbbrev(whereCanILand[i])); 
+					printf ("Current Location = %s\n", idToAbbrev(whereCanILand[i])); 
                     whereCanILand[i] = -1; 
                 }
-            } else { /* not in trail*/ printf ("debug2\n"); }
+            } else { /* not in trail*/ }
         } // now our LAND array has illegal and legal moves 
 
         // We are now creating an array of ONLY legal moves 
         // Counting legal possible moves
         int ctr = 0; 
         int j;
-printf ("debug3\n"); 
         for (j = 0; j < *numWhereCanILand; j++) {
             if (whereCanILand[ctr] != -1) ctr++; 
             j++; 
@@ -195,22 +191,23 @@ printf ("debug3\n");
         // create array that stores legal moves
         LocationID legalMoves[ctr]; int k = 0; 
         //int j;
-printf ("debug4\n"); 
+        printf("Legal Drac moves: ");
         for (j = 0; j < *numWhereCanILand; j++) {
-printf ("debug5\n"); 
             if (whereCanILand[j] != -1) {
                 legalMoves[k] = whereCanILand[j]; 
-				printf("%s\n",idToAbbrev(legalMoves[k])); 
+				printf("%s ",idToAbbrev(legalMoves[k])); 
                 k++; 
             } 
             j++; 
         }
-printf ("debug6\n"); 
+        printf("\n");
+
         // select random move (because cbb breadth first search) 
 		time_t t; 
     	srand ((unsigned) time(&t));         
 		int random = rand() % ctr; 
-		otherMoveStr = idToAbbrev(legalMoves[random]); printf("otherMvStr %s\n", otherMoveStr);
+		otherMoveStr = idToAbbrev(legalMoves[random]); 
+        printf("moving to (otherMvStr): %s\n", otherMoveStr);
 		free(whereCanILand);
 		free(whereCanISea); 
 		//int huntArray[NUM_HUNTERS];
@@ -231,16 +228,16 @@ printf ("debug6\n");
         }
         
         // We must now check this location 
-        // whether it is inTrail and whether we can HIDE or DB
+        // whether it is trailIndex and whether we can HIDE or DB
         // if we can HIDE or DB we should. 
-        int inTrail = checkInTrail(newLoc, trail);
-        if (inTrail == -1) { // no need to do anything
-        } else if (inTrail >= 0) { 
-            if (inTrail == 0) { // if newLoc is first in 
+        int trailIndex = checkInTrail(newLoc, trail);
+        if (trailIndex == -1) { // no need to do anything
+        } else if (trailIndex >= 0) { 
+            if (trailIndex == 0) { // if newLoc is first in 
                 if (hide == FALSE) {newLoc = HIDE;} 
                 //else if (DB == FALSE) {newLoc = DOUBLE_BACK_1;} //Not sure 
                 else {newLoc = TPorSea(*numWhereCanISea, whereCanISea);} 
-            } else if (DB == FALSE) {getDB(inTrail, newLoc);}//check   
+            } else if (DB == FALSE) {getDB(trailIndex, newLoc);}//check   
         }
 		otherMoveStr = idToAbbrev(newLoc); 
     	free(whereCanILand); 
@@ -286,23 +283,23 @@ int dbInTrail(DracView dv) {
 
 // checks where LocationID is in trial, if not return -1 
 int checkInTrail(LocationID newLocation, LocationID trail[TRAIL_SIZE]){
-    int inTrail = -1; // by default not in trial 
+    int trailIndex = -1; // by default not in trial 
     int i;
     for (i = 0; i < TRAIL_SIZE; i++) {
-			printf("intrail = %d\n",trail[i]);
+			//printf("intrail = %d\n",trail[i]);
         if ((trail[i] == newLocation) && (trail[i] != UNKNOWN_LOCATION)){
-            inTrail = i; 
-			printf("found %d\n",inTrail);
+            trailIndex = i; 
+			//printf("found %d\n",trailIndex);
             break;  
 		}
     }
-    return inTrail;  
+    return trailIndex;  
 } 
 
 
 // gets double back in trail 
-int getDB (int inTrail, LocationID whereCanILand) {
-    switch (inTrail) {
+int getDB (int trailIndex, LocationID whereCanILand) {
+    switch (trailIndex) {
         case 1: 
             whereCanILand = DOUBLE_BACK_1;
             break;
