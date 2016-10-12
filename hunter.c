@@ -52,9 +52,9 @@ void decideHunterMove(HunterView gameState)
     if(round == 0){
     	// start the game with every hunter in a specific location
         if(player == PLAYER_LORD_GODALMING) { 
-            registerBestPlay("GA", "Godalming Here"); // ambushing drac at his door step
+            registerBestPlay("GA", "Godalming Here"); // ambushing drac at his door step BC<-->BD<-->CN
         } else if (player == PLAYER_DR_SEWARD) {
-            registerBestPlay("KL", "Seward Here"); // ambushing drac at his door step
+            registerBestPlay("KL", "Seward Here"); // ambushing drac at his door step GA<-->KL<-->SZ
         } else if(player == PLAYER_VAN_HELSING) {
             registerBestPlay("TO", "Helsing Here"); // will scan the south west entry MR<-->TO<-->BO
         } else if(player == PLAYER_MINA_HARKER) {
