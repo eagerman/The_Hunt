@@ -284,7 +284,7 @@ int checkInTrail(LocationID newLocation, LocationID trail[TRAIL_SIZE]){
 int getDB (int inTrail, LocationID whereCanILand) {
     switch (inTrail) {
         case 1: 
-            whereCanILand= DOUBLE_BACK_1;
+            whereCanILand = DOUBLE_BACK_1;
             break;
         case 2: 
             whereCanILand = DOUBLE_BACK_2;

@@ -1,6 +1,6 @@
 // HunterView.c ... HunterView ADT implementation
 // COMP1927 16s2 ... basic HunterView (supplied code)
-// Code by TheGroup from COMP1927 14s2
+// Code by TheGroup from COMP1927 14s2 (modified by gac & jas)
 
 #include <stdlib.h>
 #include <assert.h>
@@ -21,7 +21,6 @@ struct hunterView {
 // Creates a new HunterView to summarise the current state of the game
 HunterView newHunterView(char *pastPlays, PlayerMessage messages[])
 {
-    //REPLACE THIS WITH YOUR OWN IMPLEMENTATION
     HunterView hunterView = malloc(sizeof(struct hunterView));
     hunterView->game = newGameView(pastPlays, messages);
     return hunterView;
@@ -31,9 +30,8 @@ HunterView newHunterView(char *pastPlays, PlayerMessage messages[])
 // Frees all memory previously allocated for the HunterView toBeDeleted
 void disposeHunterView(HunterView toBeDeleted)
 {
-    //COMPLETE THIS IMPLEMENTATION
     free(toBeDeleted->game);
-    free( toBeDeleted );
+    free(toBeDeleted);
 }
 
 
@@ -73,7 +71,7 @@ LocationID whereIs(HunterView currentView, PlayerID player)
 
 // Fills the trail array with the location ids of the last 6 turns
 void giveMeTheTrail(HunterView currentView, PlayerID player,
-                            LocationID trail[TRAIL_SIZE])
+                    LocationID trail[TRAIL_SIZE])
 {
     getHistory(currentView->game, player, trail);
 }
@@ -81,12 +79,13 @@ void giveMeTheTrail(HunterView currentView, PlayerID player,
 //// Functions that query the map to find information about connectivity
 
 // What are my possible next moves (locations)
-LocationID *whereCanIgo(HunterView currentView, int *numLocations, int road, int rail, int sea)
+LocationID *whereCanIgo(HunterView currentView, int *numLocations,
+                        int road, int rail, int sea)
 {
     return whereCanTheyGo(currentView,
-                               numLocations,
-                               getCurrentPlayer(currentView->game),
-                               road, rail, sea);
+	                      numLocations,
+	                      getCurrentPlayer(currentView->game),
+	                      road, rail, sea);
 }
 
 // What are the specified player's next possible moves
@@ -94,33 +93,30 @@ LocationID *whereCanTheyGo(HunterView currentView, int *numLocations,
                            PlayerID player, int road, int rail, int sea)
 {
     int i, numValidLocations, index;
-    LocationID forbidden;
+    LocationID forbidden = NOWHERE;
     LocationID *validLocations;
 
-    LocationID *locations = connectedLocations(currentView->game,
-                               numLocations,
-                               getLocation(currentView->game, player),
-                               player,
-                               getRound(currentView->game),
-                               road, rail, sea);
-    if(player == PLAYER_DRACULA){
-        forbidden = ST_JOSEPH_AND_ST_MARYS;
-    }
+    LocationID *locations =
+		connectedLocations(currentView->game,
+	                       numLocations,
+		                   getLocation(currentView->game, player),
+		                   player,
+		                   getRound(currentView->game),
+		                   road, rail, sea);
 
+    if (player == PLAYER_DRACULA) forbidden = ST_JOSEPH_AND_ST_MARYS;
     numValidLocations = 0;
     for(i = 0; i < (*numLocations); i++){
-        if(locations[i] != forbidden){
-            numValidLocations++;
-        }
+        if (locations[i] == forbidden) continue;
+        numValidLocations++;
     }
 
     index = 0;
     validLocations = malloc(sizeof(LocationID) * numValidLocations);
     for(i = 0; i < numValidLocations; i++){
-        if(locations[i] != forbidden){
-            validLocations[index] = locations[i];
-            index++;
-        }
+        if (locations[i] == forbidden) continue;
+        validLocations[index] = locations[i];
+        index++;
     }
 
     free(locations);

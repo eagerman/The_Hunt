@@ -42,18 +42,18 @@ void disposeDracView(DracView toBeDeleted);
 
 // Get the current round
 
-Round giveMeTheRound(DracView currentView);
+Round giveMeTheRound(DracView view);
 
 // Get the current score
 // Returns a positive integer [0...366]
 
-int giveMeTheScore(DracView currentView);
+int giveMeTheScore(DracView view);
 
 // Get the current health points for a given player
 // 'player' specifies which players's life/blood points to return
 //    and must be a value in the interval [0...4] (see 'player' type)
 
-int howHealthyIs(DracView currentView, PlayerID player);
+int howHealthyIs(DracView view, PlayerID player);
 
 // Get the current location id of a given player
 // May be UNKNOWN_LOCATION if the player has not had a turn yet
@@ -62,7 +62,7 @@ int howHealthyIs(DracView currentView, PlayerID player);
 //   (assumes that the pastPlays string contains full Dracula
 //    locations since Dracula always knows where he's been)
 
-LocationID whereIs(DracView currentView, PlayerID player);
+LocationID whereIs(DracView view, PlayerID player);
 
 // Get the most recent move of a given player
 // Returns the start location and end location of that move
@@ -70,7 +70,7 @@ LocationID whereIs(DracView currentView, PlayerID player);
 //   but the start location may be UNKNOWN_LOCATION (for a hunter's first move)
 // The start and end locations can be the same
 
-void lastMove(DracView currentView, PlayerID player,
+void lastMove(DracView view, PlayerID player,
                  LocationID *start, LocationID *end);
 
 // Find out what minions I (Dracula) has placed at the specified location
@@ -79,7 +79,7 @@ void lastMove(DracView currentView, PlayerID player,
 // If where is not a place where minions can be left (e.g. at sea,
 //   or NOWHERE), then set both counts to zero
 
-void whatsThere(DracView currentView, LocationID where,
+void whatsThere(DracView view, LocationID where,
                          int *numTraps, int *numVamps);
 
 
@@ -96,8 +96,14 @@ void whatsThere(DracView currentView, LocationID where,
 // If Dracula asks about his own trail, he should get precise information
 //   about where he has been (real locations, not double-back, etc)
 
-void giveMeTheTrail(DracView currentView, PlayerID player,
-                        LocationID trail[TRAIL_SIZE]);
+void giveMeTheTrail(DracView view, PlayerID player, LocationID trail[TRAIL_SIZE]);
+
+
+// Fills the trail array with the moves for the last 6 turns
+//   for the given player, including Dracula (if he asks about his own trail)
+// Even Dracula gets double-backs, etc.
+
+void giveMeTheMoves(DracView view, PlayerID player, LocationID trail[TRAIL_SIZE]);
 
 
 //// Functions that query the map to find information about connectivity
@@ -113,7 +119,7 @@ void giveMeTheTrail(DracView currentView, PlayerID player,
 // The set of possible locations must be consistent with the rules on Dracula's
 //   movement (e.g. can't MOVE to a location currently in his trail)
 
-LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int sea);
+LocationID *whereCanIgo(DracView view, int *numLocations, int road, int sea);
 
 // whereCanTheyGo() returns an array of LocationIDs giving all of the
 //   locations that the given Player could reach from their current location
@@ -127,7 +133,7 @@ LocationID *whereCanIgo(DracView currentView, int *numLocations, int road, int s
 //   to produce the answers
 // The player's current location should be included in the array
 
-LocationID *whereCanTheyGo(DracView currentView, int *numLocations,
+LocationID *whereCanTheyGo(DracView view, int *numLocations,
                            PlayerID player, int road, int rail, int sea);
 
 #endif
