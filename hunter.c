@@ -19,13 +19,14 @@
 - hunter should rest (3 lifePts) as soon as their blood level approach 
 - what happenes after hospital?
 
+ the map: https://cgi.cse.unsw.edu.au/~cs1927/16s2/ass/ass2/Pics/map2.png
+
 - tracing dracula:
 	- on round 6 if all hunters rest they will know where dracula was on prev turn (6th loc in trail)
 	- if one hunter meets drac in a city all other hunters can see his location in hins trail
 	- keep an eye on drac if he goes to sea or land from sea, we can then follow him
 	- we might want to read drac's trail on every round
    */
-
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -52,9 +53,9 @@ void decideHunterMove(HunterView gameState)
     if(round == 0){
     	// start the game with every hunter in a specific location
         if(player == PLAYER_LORD_GODALMING) { 
-            registerBestPlay("GA", "Godalming Here"); // ambushing drac at his door step BC<-->BD<-->CN
-        } else if (player == PLAYER_DR_SEWARD) {
-            registerBestPlay("KL", "Seward Here"); // ambushing drac at his door step GA<-->KL<-->SZ
+            registerBestPlay("GA", "Godalming Here"); // ambushing drac at his door step BC<-->GA<-->CN
+        } else if (player == PLAYER_DR_SEWARD) {	// meeting drac in 1 of these 6 cities means he is goin in or out of CD
+            registerBestPlay("KL", "Seward Here"); // ambushing drac at his door step BD<-->KL<-->SZ
         } else if(player == PLAYER_VAN_HELSING) {
             registerBestPlay("TO", "Helsing Here"); // will scan the south west entry MR<-->TO<-->BO
         } else if(player == PLAYER_MINA_HARKER) {
