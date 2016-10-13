@@ -43,6 +43,30 @@
 	but i then thought that they should not be just standing because we want to minimise vampires from maturing
 	so i thought i will get these 2 hunters each to circulate 3 cities lead 2 CD, 
 
+	after analyzing this log for over an hour, trying to understand how could the hunter 2 
+	move from CN to BE in round 5, i finally got it
+	cos what the rules says 5mod4=1 i.e he can move to a city with 1 rail link in-between
+	the folmula is ((roundNum) mod 4 ) + playerNum = x 
+	if x is 0 no rail
+	if x is 1, then can move to adjacent city via 1 rail link
+
+	so that means: 
+	player 3 'M' = Mina Harker 		can do 3-6 rail moves depending on roundNum
+	player 2 'H' = Van Helsing 		can do 2-5 rail moves depending on roundNum
+	player 1 'S' = Dr. Seward  		can do 1-4 rail moves depending on roundNum
+	player 0 'G' = Lord Godalming	can do 0-3 rail moves depending on roundNum
+
+	we can have the player in 2 states: Scanning (Gaurding) and Attacking
+	we make player 3 our long range attacker, if we make her scan around CD and KEEP her within 3 rail links
+	of GA, we can guarantee that the round drac is at CD and we know that,
+	she can scan all these cities BC-GA-CN-BE-BD-KL-SZ..
+	 we can send her to GA in one move
+	drac will have no choice but to exit from KL or HIDE in CD if he is allowed.
+	if he exists from KL mina can attack him right away, she will move to KL either way because she cant see him
+	we can then send the rest of hunters with BFS
+	we can send with Mina  any other players who has long range single move by rail that can get clode to CD
+	oh i gotta go
+
 	*/
 
 #include <stdlib.h>
@@ -69,14 +93,14 @@ void decideHunterMove(HunterView gameState)
 
     if(round == 0){
     	// start the game with every hunter in a specific location
-        if(player == PLAYER_LORD_GODALMING) { 
-            registerBestPlay("GA", "Godalming Here"); // ambushing drac at his door step BC<-->GA<-->CN
-        } else if (player == PLAYER_DR_SEWARD) {	// meeting drac in 1 of these 6 cities means he is goin in or out of CD
-            registerBestPlay("KL", "Seward Here"); // ambushing drac at his door step BD<-->KL<-->SZ
-        } else if(player == PLAYER_VAN_HELSING) {
-            registerBestPlay("TO", "Helsing Here"); // will scan the south west entry MR<-->TO<-->BO
-        } else if(player == PLAYER_MINA_HARKER) {
-            registerBestPlay("MU", "Harker Here"); // will scan middle entry VE<-->MU<-->VI
+        if(player == PLAYER_MINA_HARKER) { 
+            registerBestPlay("FR", "Harker Here"); // ambushing drac at his door step BC<-->GA<-->CN
+        } else if (player == PLAYER_VAN_HELSING) {	// meeting drac in 1 of these 6 cities means he is goin in or out of CD
+            registerBestPlay("KL", "Helsing Here"); // ambushing drac at his door step BD<-->KL<-->SZ
+        } else if(player == PLAYER_DR_SEWARD) {
+            registerBestPlay("TO", "Seward Here"); // will scan the south west entry MR<-->TO<-->BO
+        } else if(player == PLAYER_LORD_GODALMING) {
+            registerBestPlay("MU", "Godalming Here"); // will scan middle entry VE<-->MU<-->VI
         }
     } else if ( round == 6 ) { // we can reveal Dracula's 6th move in trail
     		// if we rest all the hunters
