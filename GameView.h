@@ -1,5 +1,5 @@
 // GameView.h ... Interface for GameViewADT
-// COMP1927 16s2 ... basic GameView (supplied code)
+// COMP1927 15s2 ... basic GameView (supplied code)
 
 #ifndef GAME_VIEW_H
 #define GAME_VIEW_H

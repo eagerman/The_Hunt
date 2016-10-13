@@ -1,0 +1,19 @@
+-1- Our Drac is visiting places not in his legalmove array.
+	and even one of the logs i found him going to CastleDracula in the round 0!!
+	one of the moves was "??", where the heck did this come from?!! & it throws: Program Output(18): Something fked up
+	 here the log page: https://cgi.cse.unsw.edu.au/~cs1927ass/16s2.dracula/round02/logs/h-g041-d-g020.log.gz
+
+-2- Comparing our legal movearray to the one printed in the logs, ours is skipping every second place, so the size is actually half of what it is supposed to be.
+
+-3- Many of the cases our program is crashing, and the reason is because Dracula is not allowed to place more than 2 traps in the same city. 
+	but the thing is that traps are placed automatically by the GameView.c, we need to use the function whatsThere() to check the number of traps in a city before going in
+	Program Output(4426): g020.elf: GameView.c:145: newGameView: Assertion `i < 3' failed.
+
+-4- One other weired behaviour of the program, is use these 2 pasteplays in player.c:
+	char *plays = "GGE.... SGE.... HGE.... MGE.... DCD.V.. GGE.... SGE.... HGE.... MGE....";
+    char *plays = "GPA.... SMI.... HBE.... MMA.... DLO.V.. GBO.... SFL.... HBC.... MAL.... DPLT... GBA.... SBI.... HCN.... MGR....";
+
+    when u use the first one the debugging printfs are showing up,
+    but with the second one they dont, what the heck is this!!
+
+-5- Looks like most of the times our stupid Drac is choosing to Hide
