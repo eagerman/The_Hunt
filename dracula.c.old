@@ -1,17 +1,6 @@
 // dracula.c
 // Implementation of your "Fury of Dracula" Dracula AI
 
-/*
-Ending the round at DC will gain me 10lifePts, but hunters will know that
-i can only move by road or sea(i'll loose 2 lifePts)
-which is better for me placing vampires or traps?
-    hunters will loose 2 lifePts when encounter a trap
-    but no lifePts when encounter and kill my vampires
-    but my vampires reduce score by 13 when mature
-    can i place both?
-
-*/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include "Game.h"
@@ -42,6 +31,7 @@ void decideDraculaMove(DracView gameState)
 	char *dracMove;
 
     if (roundNum == 0) {
+		printf ("This is %d and we are trying to use firstMv()\n", roundNum); 	
         dracMove = firstMove(gameState);
     } else { 		
 		printf("This is round %d and we are using otherMv()\n", roundNum);		
