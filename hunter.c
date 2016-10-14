@@ -34,7 +34,10 @@
 #include "Game.h"
 #include "HunterView.h"
 
+#define numQuotes 3
+
 int traceDrac();
+PlayerMessage trashTalk();
 void resetAllHunters();
 
 void decideHunterMove(HunterView gameState)
@@ -115,6 +118,14 @@ int traceDrac(){
 	// replace this code
 	// find 
 	return 0;
+}
+
+PlayerMessage trashTalk() {
+    time_t t;
+    PlayerMessage messageDB[numQuotes] = {"Come at me","You can't touch this","You know nothing"};
+    srand((unsigned) time(&t));
+    PlayerMessage message = messageDB[rand() % numQuotes];
+    return message;
 }
 
 void resetAllHunters(){
