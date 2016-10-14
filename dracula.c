@@ -47,7 +47,8 @@ void decideDraculaMove(DracView gameState)
 		printf("This is round %d and we are using otherMv()\n", roundNum);		
         // otherMove() strategy: choose random move 
         // we should do a BFS when we have more time 
-        dracMove = otherMove(gameState); 
+        //dracMove = otherMove(gameState); 
+        dracMove = firstMove(gameState); 
     }
 	registerBestPlay(dracMove, "WASSUP WASSUP WASSUP WASSUP WASSUP");
 }

@@ -72,8 +72,6 @@ void decideHunterMove(HunterView hv)
     // get dracTrail
     giveMeTheTrail(hv, PLAYER_DRACULA , dracTrail);
 
-	if (DEBUGGING) printf ("Round %d -, Player %d\n", round, player);
-
 	if (dracTrail[0] == CASTLE_DRACULA) { attack(hv, CASTLE_DRACULA); return; }
 
     if ( round == 0 ) {
@@ -88,6 +86,7 @@ void decideHunterMove(HunterView hv)
             registerBestPlay("FR", "Helsing Here");
         } 
     	return;
+
     } else { // round 1 up
 	    	patrolMina(hv, roundMod);
 	    	mapSearch(hv, roundMod , player);
@@ -165,8 +164,6 @@ void restAllHunters(HunterView hv) {
 void restHunter(HunterView hv, int hunterID) {
 		char *restingLoc = idToAbbrev(whereIs(hv, hunterID));
 		registerBestPlay( restingLoc, "ZzzzZzzz");
-		if (DEBUGGING) printf("player %d resting at %s\n", hunterID, restingLoc);
-
 }
 
 void patrolMina(HunterView hv, int roundMod) {
@@ -182,7 +179,8 @@ void patrolMina(HunterView hv, int roundMod) {
 	if (flip) {
 		switch (roundMod) {
 			case 0: registerBestPlay("VI", "Harker Here"); break; 
-			case 1: togglePRVE(); break; // one time vist PR & one time visit VE
+			//case 1: togglePRVE(); break; // one time vist PR & one time visit VE
+			case 1: registerBestPlay("PR", "Harker Here"); break; 
 			case 2: registerBestPlay("BR", "Harker Here"); break; 
 			case 3: registerBestPlay("BD", "Harker Here"); flip = 0; break;
 		}
@@ -217,3 +215,6 @@ void attack(HunterView hv, LocationID city) {
 	// use Dijkstra's algorithm or other efficient algo
 
 }
+
+// fuck this log:
+https://cgi.cse.unsw.edu.au/~z3352206/gametest.log
