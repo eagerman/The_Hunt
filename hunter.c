@@ -38,9 +38,6 @@ void mapSearch(HunterView hv , int roundMod, int player);
 void attack(HunterView hv, LocationID city);
 
 //Global Variables
-static int flip = 1;
-static int PRVE = 0;
-static int BEBC = 0;
 static LocationID dracTrail[TRAIL_SIZE];
 static int lifePts[NUM_PLAYERS];
 static int numLocations = NUM_MAP_LOCATIONS;
