@@ -30,7 +30,7 @@
 #include "hunter.h"
 
 #define LIFETHRESHOLD 5
-
+#define DEBUGGING 1
 
 void restAllHunters();
 void restHunter(HunterView hv, int num);
@@ -62,6 +62,8 @@ void decideHunterMove(HunterView hv)
 
 	if (dracTrail[0] == CASTLE_DRACULA) { attack(hv, CASTLE_DRACULA); return; }
 
+    if (DEBUGGING) printf("Round %d & dracTrail[0] = %d | " , round , dracTrail[0]);
+
     if ( round == 0 ) {
      	// start the game with each hunter in specific location
      	switch (player) {
@@ -76,7 +78,8 @@ void decideHunterMove(HunterView hv)
 	    	mapSearch(hv, roundMod , player);
 	    
 	    // we can reveal Dracula's 6th move (of round 5) in dracTrail if we rest all the hunters
-	    if ( round % 6 == 0 ) { restAllHunters(hv); // round 6 12 18 ..etc
+	    if ( round % 6 == 0 ) { 
+	    	restHunter(hv, player); // round 6 12 18 ..etc
 	    	dracFoundLoc = dracTrail[0];
 	    	// 0th index of dracTrail is his current location, e.g in round 5 & now it will be revealed in round 6
 	    	// but he gets to move before we take our next move
@@ -111,10 +114,13 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	int currLoc = whereIs (hv, player);
 
 		// printing the possibleMoves
- /*	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
-		if (possibleMoves[i] != NOWHERE) printf("%s ",idToAbbrev(possibleMoves[i])); 
+ 	if (DEBUGGING) {
+ 		printf("Possible Moves = ");
+ 		for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+			if (possibleMoves[i] != NOWHERE) printf("%s ",idToAbbrev(possibleMoves[i])); 
+		}
 	}
-*/	
+	
 
 	// TODO
 	// replace the following with an algorithm to search the rest of the map with the other 3 hunters
