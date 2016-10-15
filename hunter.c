@@ -28,9 +28,10 @@
 #include "Game.h"
 #include "HunterView.h"
 #include "hunter.h"
+#include <regex.h>
 
 #define LIFETHRESHOLD 5
-#define DEBUGGING 1
+#define DEBUGGING 0
 
 void restAllHunters();
 void restHunter(HunterView hv, int num);
@@ -57,40 +58,37 @@ void decideHunterMove(HunterView hv)
     	lifePts[i] = howHealthyIs(hv, i);
     }
 
-    // get dracTrail
-    giveMeTheTrail(hv, PLAYER_DRACULA , dracTrail);
-
-	if (dracTrail[0] == CASTLE_DRACULA) { attack(hv, CASTLE_DRACULA); return; }
-
-    if (DEBUGGING) printf("Round %d & dracTrail[0] = %d | " , round , dracTrail[0]);
-
     if ( round == 0 ) {
-     	// start the game with each hunter in specific location
+     	// start the game with each hu./csenter in specific location
      	switch (player) {
 			case PLAYER_LORD_GODALMING : registerBestPlay("GA", "Godalming Here"); break;
 	        case PLAYER_DR_SEWARD : registerBestPlay("VI", "Seward Here"); break;
 	        case PLAYER_VAN_HELSING : registerBestPlay("PA", "Helsing Here"); break;
 	        case PLAYER_MINA_HARKER : registerBestPlay("MA", "HARKER Here"); break;
     	}
-    return;
-
+    	return;
     } else { // round 1 up
-	    	mapSearch(hv, roundMod , player);
-	    
+
+	    // get dracTrail
+	    giveMeTheTrail(hv, PLAYER_DRACULA , dracTrail);
+
+	    // uncomment me when you implement me
+		// when a hunter confronts drac it will show up in his trail as 2 strings like "CA" we need to differenciate that from "C?"
+		//if (dracTrail[0] == CASTLE_DRACULA) { attack(hv, CASTLE_DRACULA); return; }
+
+	    if (DEBUGGING) printf("Round %d & dracTrail[0] = %s | " , round , idToAbbrev(dracTrail[0]));
+
 	    // we can reveal Dracula's 6th move (of round 5) in dracTrail if we rest all the hunters
-	    if ( round % 6 == 0 ) { 
-	    	restHunter(hv, player); // round 6 12 18 ..etc
-	    	dracFoundLoc = dracTrail[0];
-	    	// 0th index of dracTrail is his current location, e.g in round 5 & now it will be revealed in round 6
-	    	// but he gets to move before we take our next move
-
-	    } else if ( round % 6 == 1 ) { //dracula is found (round 7 13 19.. etc)
-	    	// get all the hunters to move towards dracula. he is only one move ahead
-	    	attack(hv , dracFoundLoc);
-
-		} else { // all other rounds - 1 2 3 4 5 - - 8 9 10 11 - - 14...
-
-			mapSearch(hv, roundMod , player);
+	    int rnd = round % 6;
+	    switch (rnd) {
+	    	case 0: 	// round 6 12 18 ..etc
+	    		restHunter(hv, player); 
+	    		dracFoundLoc = dracTrail[0];
+	    		// 0th index of dracTrail is his current location, e.g in round 5 & now it will be revealed in round 6
+	    		// but he gets to move before we take our next move
+	    	case 1:		// dracula is found (round 7 13 19.. etc)
+	    		attack(hv , dracFoundLoc);
+ 			default : mapSearch(hv, roundMod , player); // all other rounds - 1 2 3 4 5 - - 8 9 10 11 - - 14...
 	    } 
 	}
 }
@@ -110,8 +108,9 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	//fill the array with all possible legal moves
 	possibleMoves = whereCanIgo(hv, &numLocations, TRUE, TRUE, TRUE);
 
-	//get current locations of hunters
-	int currLoc = whereIs (hv, player);
+	//get current locationsID of hunters
+	int currLoc = whereIs(hv, player);
+	move = idToAbbrev(currLoc);
 
 		// printing the possibleMoves
  	if (DEBUGGING) {
@@ -120,8 +119,6 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 			if (possibleMoves[i] != NOWHERE) printf("%s ",idToAbbrev(possibleMoves[i])); 
 		}
 	}
-	
-
 	// TODO
 	// replace the following with an algorithm to search the rest of the map with the other 3 hunters
 	// take into account when drac is found and attacked in round%6=1 how to expect his next move inorder to keep track of him
@@ -147,16 +144,9 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 }
 
 
-void restAllHunters(HunterView hv) {
-	int playerNum;
-	for ( playerNum = 0; playerNum < NUM_PLAYERS-1; playerNum++ ) {
-		char *restingLoc = idToAbbrev(whereIs(hv, playerNum));
-		registerBestPlay( restingLoc, "where are you drac?");
-	}
-}
-
 void restHunter(HunterView hv, int hunterID) {
 		char *restingLoc = idToAbbrev(whereIs(hv, hunterID));
+		printf("resting at %s\n",restingLoc);
 		registerBestPlay( restingLoc, "ZzzzZzzz");
 }
 
