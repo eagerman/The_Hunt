@@ -20,11 +20,6 @@
 		while if u enter a city drac is in you can encounter his traps and vamps and confront him in the current turn
 	- keep an eye on drac if he goes to sea or land from sea, we can then follow him
 	- so we want to read drac's trail on every round
-
-	player 3 'M' = Mina Harker 		can do 3-6 rail moves depending on roundNum
-	player 2 'H' = Van Helsing 		can do 2-5 rail moves depending on roundNum
-	player 1 'S' = Dr. Seward  		can do 1-4 rail moves depending on roundNum
-	player 0 'G' = Lord Godalming	can do 0-3 rail moves depending on roundNum
 */
 
 #include <stdlib.h>
@@ -37,12 +32,8 @@
 #define LIFETHRESHOLD 5
 
 
-int isDracHome(HunterView hv);
 void restAllHunters();
 void restHunter(HunterView hv, int num);
-void patrolMina(HunterView hv, int roundMod);
-void togglePRVE();
-void toggleBEBC();
 void mapSearch(HunterView hv , int roundMod, int player);
 void attack(HunterView hv, LocationID city);
 
@@ -76,19 +67,15 @@ void decideHunterMove(HunterView hv)
 
     if ( round == 0 ) {
      	// start the game with each hunter in specific location
-		if (player == PLAYER_MINA_HARKER) { 
-        	patrolMina(hv, roundMod);   
-		} else if (player == PLAYER_LORD_GODALMING) { 
-            registerBestPlay("GA", "Godalming Here"); 
-        } else if (player == PLAYER_DR_SEWARD) {
-            registerBestPlay("MA", "Seward Here");
-        } else if (player == PLAYER_VAN_HELSING) {
-            registerBestPlay("FR", "Helsing Here");
-        } 
-    	return;
+     	switch (player) {
+			case PLAYER_LORD_GODALMING : registerBestPlay("GA", "Godalming Here"); break;
+	        case PLAYER_DR_SEWARD : registerBestPlay("VI", "Seward Here"); break;
+	        case PLAYER_VAN_HELSING : registerBestPlay("PA", "Helsing Here"); break;
+	        case PLAYER_MINA_HARKER : registerBestPlay("MA", "HARKER Here"); break;
+    	}
+    return;
 
     } else { // round 1 up
-	    	patrolMina(hv, roundMod);
 	    	mapSearch(hv, roundMod , player);
 	    
 	    // we can reveal Dracula's 6th move (of round 5) in dracTrail if we rest all the hunters
@@ -114,6 +101,9 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	int bestMove = 0;
 	char *move;
 	int i = 0; 
+
+	if ( lifePts[player] <= LIFETHRESHOLD ) { restHunter(hv, player); return; }
+
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
 		possibleMoves[i] = -1;
 	} 
@@ -125,7 +115,6 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 
 	// TODO
 	// replace the following with an algorithm to search the rest of the map with the other 3 hunters
-	// keep the case if it is Mina's turn
 	// take into account when drac is found and attacked in round%6=1 how to expect his next move inorder to keep track of him
 	// always read his trail to check for HIDES or DOUBLEBACKS
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
@@ -142,9 +131,8 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	        } else if (player == PLAYER_VAN_HELSING) {
 	            registerBestPlay(move, "Helsing Here");
 	        } else if (player == PLAYER_MINA_HARKER) {
-	            patrolMina(hv, roundMod);
+	           registerBestPlay(move, "Helsing Here");
 	        }
-			return;
 		}
 		i++;
 	}
@@ -166,55 +154,18 @@ void restHunter(HunterView hv, int hunterID) {
 		registerBestPlay( restingLoc, "ZzzzZzzz");
 }
 
-void patrolMina(HunterView hv, int roundMod) {
-	// to see the full picture of how Mina is patrolling, look at the picture in the following link
-	// she scans in this pattern: {VI,PR,BR,BD,SZ,BE,SO,BD,VI,VE,BR,BD,SZ,BC,SO,BD}
-	// http://www.cse.unsw.edu.au/~z3352206/mina.png
-	// the point of this patroling pattern is that whenever dracula is found at CD, Mina can get to GA in one move
-
-	if ( lifePts[PLAYER_MINA_HARKER] <= LIFETHRESHOLD ) { restHunter(hv, PLAYER_MINA_HARKER); return; }
-	// because Mina can move at least 3 link rails the following pattern should always be legal
-	// except that when she rests she skips the next adjacent city but that should be fine as she will come back soon
-
-	if (flip) {
-		switch (roundMod) {
-			case 0: registerBestPlay("VI", "Harker Here"); break; 
-			//case 1: togglePRVE(); break; // one time vist PR & one time visit VE
-			case 1: registerBestPlay("PR", "Harker Here"); break; 
-			case 2: registerBestPlay("BR", "Harker Here"); break; 
-			case 3: registerBestPlay("BD", "Harker Here"); flip = 0; break;
-		}
-		
-	} else { //flop
-		switch (roundMod) {
-			case 0: registerBestPlay("SZ", "Harker Here"); break; 
-			case 1: toggleBEBC(); break; // one time vist BE & one time visit BC
-			case 2: registerBestPlay("SO", "Harker Here"); break; 
-			case 3: registerBestPlay("BD", "Harker Here"); flip = 1; break;
-		}
-	}
-}
-
-void togglePRVE() {
-	switch (PRVE) {
-		case 0: registerBestPlay("PR", "Harker Here"); PRVE = 1; break;
-		case 1: registerBestPlay("VE", "Harker Here"); PRVE = 0; break;
-	}
-}
-
-void toggleBEBC() {
-	switch (BEBC) {
-		case 0: registerBestPlay("BE", "Harker Here"); BEBC = 1; break;
-		case 1: registerBestPlay("BC", "Harker Here"); BEBC = 0; break;
-	}
-}
-
 void attack(HunterView hv, LocationID city) {
 	//TODO
-	// send all the hunters to this location using the shortest path
-	// use Dijkstra's algorithm or other efficient algo
+	/*
+	send all the hunters to this location using the shortest path
+	use Dijkstra's algorithm or other efficient algo
+	take into consideration the formula that i misundertood before
+	(round+playerNum)%4
+	e.g for player 2
+	(round 2 + 2 ) % 4 = 0 No rail
+	(round 3 + 2 ) % 4 = 1 rail links
+	(round 0 + 2 ) % 4 = 2 rail links
+	(round 1 + 2 ) % 4 = 3 rail links
+*/
 
 }
-
-// fuck this log:
-https://cgi.cse.unsw.edu.au/~z3352206/gametest.log
