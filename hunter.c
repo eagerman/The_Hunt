@@ -102,7 +102,7 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	if ( lifePts[player] <= LIFETHRESHOLD ) { restHunter(hv, player); return; }
 
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
-		possibleMoves[i] = -1;
+		possibleMoves[i] = NOWHERE;
 	} 
 	//fill the array with all possible legal moves
 	possibleMoves = whereCanIgo(hv, &numLocations, TRUE, TRUE, TRUE);
@@ -110,28 +110,31 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	//get current locations of hunters
 	int currLoc = whereIs (hv, player);
 
+		// printing the possibleMoves
+ /*	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
+		if (possibleMoves[i] != NOWHERE) printf("%s ",idToAbbrev(possibleMoves[i])); 
+	}
+*/	
+
 	// TODO
 	// replace the following with an algorithm to search the rest of the map with the other 3 hunters
 	// take into account when drac is found and attacked in round%6=1 how to expect his next move inorder to keep track of him
 	// always read his trail to check for HIDES or DOUBLEBACKS
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
 
-		if (possibleMoves[i] != currLoc) {
+		if (possibleMoves[i] != NOWHERE && possibleMoves[i] != currLoc) {
 
 			bestMove = possibleMoves[i];
 			move = idToAbbrev(bestMove);
+			break;
+	    }
+	}
 
-			if (player == PLAYER_LORD_GODALMING) { 
-	            registerBestPlay(move, "Godalming Here"); 
-	        } else if (player == PLAYER_DR_SEWARD) {
-	            registerBestPlay(move, "Seward Here");
-	        } else if (player == PLAYER_VAN_HELSING) {
-	            registerBestPlay(move, "Helsing Here");
-	        } else if (player == PLAYER_MINA_HARKER) {
-	           registerBestPlay(move, "Helsing Here");
-	        }
-		}
-		i++;
+	switch (player) { //or simply replace this switch with registerBestPlay(move, "im here");
+		case PLAYER_LORD_GODALMING : registerBestPlay(move, "Godalming Here"); break;
+        case PLAYER_DR_SEWARD : registerBestPlay(move, "Seward Here"); break;
+        case PLAYER_VAN_HELSING : registerBestPlay(move, "Helsing Here"); break;
+        case PLAYER_MINA_HARKER : registerBestPlay(move, "HARKER Here"); break;
 	}
 
 	free (possibleMoves);
