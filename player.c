@@ -56,9 +56,11 @@ int main(int argc, char *argv[])
    disposeDracView(gameState);
 #else
    HunterView gameState;
-   char *plays = "GZA.... SED.... HZU....";
+//   char *plays = "GZA.... SED.... HZU....";
+   char *plays = "";
    PlayerMessage msgs[3] = { "", "", "" };
    gameState = newHunterView(plays,msgs);
+   
    decideHunterMove(gameState);
    disposeHunterView(gameState);
 #endif 
@@ -74,4 +76,5 @@ void registerBestPlay (char *play, PlayerMessage message) {
      
    strncpy(latestMessage, message, MESSAGE_SIZE);
    latestMessage[MESSAGE_SIZE-1] = '\0';
+   printf("%s,", latestPlay);
 }
