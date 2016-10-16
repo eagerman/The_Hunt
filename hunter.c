@@ -23,6 +23,9 @@
 #include "Game.h"
 #include "HunterView.h"
 #include "hunter.h"
+#include "Queue.h"
+#include "Places.h"
+#include "Map.h"
 
 #define LIFETHRESHOLD 3
 #define DEBUGGING 0
@@ -195,7 +198,7 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	/*
 	send all the hunters to this location using the shortest path, and search around it
 	use Dijkstra's algorithm or other efficient algo
-	if it is goinf to take a hunter 3 moves to get to the city expect Drac to be 3 moves away 
+	if it is going to take a hunter 3 moves to get to the city expect Drac to be 3 moves away 
 	so send the hunter to the city surrounding this city and close doen on him
 */	//temporarly
 	printf("Attacking %s\n", idToName(dracFoundLoc));
@@ -208,10 +211,48 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	for ( i = 0; i < NUM_PLAYERS-1; i++ ) { 
 		printf("Player%d possibleMoves are: ",i); 
 		huntersPossibleMoves = whereCanTheyGo(hv, numLocations, i, TRUE, TRUE, TRUE);	
-		for ( j = 0; j < x; j++ ) printf("%s ", idToAbbrev(huntersPossibleMoves[j]));
+		for ( j = 0; j < *numLocations; j++ ) printf("%s ", idToAbbrev(huntersPossibleMoves[j]));
 		printf("\n");
 	}
+
+    // we need a to use a queue ADT to use Dijkstra so I created a Queue.c & Queue.h
+    // BFS algorithm, I don't think we use djikstra because there are no weights 
+    Map g = newMap(); 
+    assert (g != NULL); 
+
+    LocationID hunterLoc = whereIs(hv, player); 
+    visited = calloc(g->nV, sizeof(LocationID)); 
+    int *pred = malloc(g->nV, sizeof(LocationID)*NUM_MAP_LOCATIONS); 
+    for (LocationID i = 0; i < g->nV; i++) pred[i] = -1; 
+
+    Queue q = newQueue();
+    QueueJoin(q, hunterLoc); 
+    visited[hunterLoc] = 1; 
+    int isFound = 0; 
+    while (!QueueIsEmpty(q) && !isFound) {
+        LocationID y, x = QueueLeave(q); 
+        if (visited[x]) continue:
+        visited[x] = 1; 
+        for (y = 0; y < g->nV; y++) {
+            if (hasEdge(g, x, y) != 1) continue;
+            if (!visited[y]) {
+                QueueJoin(q, y); 
+                visited[x] = 1;
+                if (y == dracFoundLoc) isFound = 1;  
+            }     
+        } 
+    } 
 }
+
+// returns 1 if there is an edge, 0 if there is no edge
+int hasEdge(Map g, LocationID x, LocationID y){
+    VList curr; 
+    for (curr = g->connections[x]; curr != NULL; curr = VList->next) {
+        if (y == curr->v) return 1: 
+    }
+    return 0; 
+}
+
 
 // matches a string to a regular expression
 int isMatching( const char *string, char *pattern ) {
