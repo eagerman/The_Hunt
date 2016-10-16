@@ -25,7 +25,7 @@
 #include "hunter.h"
 
 #define LIFETHRESHOLD 3
-#define DEBUGGING 1
+#define DEBUGGING 0
 
 void restHunter(HunterView hv, int num);
 int getCurrLoc(HunterView hv, int player);
@@ -41,7 +41,8 @@ static int numLocations = NUM_MAP_LOCATIONS;
 static LocationID *possibleMoves;
 static int visited[NUM_MAP_LOCATIONS];
 static int didHealthDrop[NUM_PLAYERS];
-
+static int *DraculasPossibleMoves;
+static int numDracLocations;
 
 
 void decideHunterMove(HunterView hv)
@@ -74,9 +75,18 @@ void decideHunterMove(HunterView hv)
 	    // get dracTrail
 	    giveMeTheTrail(hv, PLAYER_DRACULA , dracTrail);
 
+	    if (isValidLoc(dracTrail[0])){
+			int *numDracLocationsPtr = &numDracLocations;
+			DraculasPossibleMoves = whereCanTheyGo(hv, numDracLocationsPtr, PLAYER_DRACULA, TRUE, FALSE, TRUE);
+			printf("\nDraculasPossibleMoves are: ");
+			for ( i = 0; i < numDracLocations; i++) printf("%s ",idToAbbrev(DraculasPossibleMoves[i]) );
+			printf("\n");
+		}
+
 		for ( i = 0; i < TRAIL_SIZE; i++ ){
 			//if ( dracTrail[i] == UNKNOWN_LOCATION ) continue;
 			if (DEBUGGING) printf("[%d]-", dracTrail[i]);
+
 			// get the last location drac was seen at
 			if ( isValidLoc(dracTrail[i]) ) { 
 				if(DEBUGGING) printf("  Drac is around  %s\n", idToAbbrev(dracTrail[i]));
@@ -139,7 +149,7 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 
 		// set an initial move as the current location
 	move = idToAbbrev(currLoc);
-	printf(" Hunter currLoc is %s\n", move);
+	printf("Player%d currLoc is %s\n",player, move);
 
  	if (DEBUGGING) { 	// printing the possibleMoves
  		printf("Possible Moves = ");
@@ -152,7 +162,8 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
 
-		if ( possibleMoves[i] != UNKNOWN_LOCATION && possibleMoves[i] != currLoc && visited[i] == FALSE ) {
+		if ( possibleMoves[i] != UNKNOWN_LOCATION && possibleMoves[i] != currLoc
+						 && visited[i] == FALSE ) {
 			move = idToAbbrev(possibleMoves[i]);
 			if (DEBUGGING) printf("Setting %s as Visited\n", move);
 			visited[i] = TRUE;
@@ -179,21 +190,28 @@ void restHunter(HunterView hv, int hunterID) {
 }
 
 
-void attack(HunterView hv, LocationID dracFoundLoc, int player , int roundMod) {
+void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundMod) {
 	//TODO
 	/*
 	send all the hunters to this location using the shortest path, and search around it
 	use Dijkstra's algorithm or other efficient algo
 	if it is goinf to take a hunter 3 moves to get to the city expect Drac to be 3 moves away 
 	so send the hunter to the city surrounding this city and close doen on him
-	use whereCanTheyGo() function to get the others hunters possibleMoves
-*/
-	//temporarly
+*/	//temporarly
 	printf("Attacking %s\n", idToName(dracFoundLoc));
-
 	mapSearch(hv, roundMod , player); //remove me & the passed int roundMod from all called attack() instances
-}
 
+	int i, j, x;
+	int *numLocations = &x;
+	LocationID *huntersPossibleMoves;
+
+	for ( i = 0; i < NUM_PLAYERS-1; i++ ) { 
+		printf("Player%d possibleMoves are: ",i); 
+		huntersPossibleMoves = whereCanTheyGo(hv, numLocations, i, TRUE, TRUE, TRUE);	
+		for ( j = 0; j < x; j++ ) printf("%s ", idToAbbrev(huntersPossibleMoves[j]));
+		printf("\n");
+	}
+}
 
 // matches a string to a regular expression
 int isMatching( const char *string, char *pattern ) {
