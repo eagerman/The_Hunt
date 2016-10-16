@@ -25,20 +25,22 @@
 #include "hunter.h"
 
 #define LIFETHRESHOLD 5
-#define DEBUGGING 0
+#define DEBUGGING 1
 
 void restAllHunters();
 void restHunter(HunterView hv, int num);
 void mapSearch(HunterView hv , int roundMod, int player);
 void attack(HunterView hv, LocationID dracFoundLoc, int player , int roundMod);
 int isMatching(const char *string, char *pattern);
-int isValidLoc( char *dracTrailAbbrev );
+int isValidLoc(int trail);
 
 //Global Variables
 static LocationID dracTrail[TRAIL_SIZE];
 static int lifePts[NUM_PLAYERS];
 static int numLocations = NUM_MAP_LOCATIONS;
 static LocationID *possibleMoves;
+static int visited[NUM_MAP_LOCATIONS];
+
 
 
 void decideHunterMove(HunterView hv)
@@ -64,46 +66,49 @@ void decideHunterMove(HunterView hv)
     	return;
     } else { // round 1 up
 
+
 	    // get dracTrail
 	    giveMeTheTrail(hv, PLAYER_DRACULA , dracTrail);
 
-	    // when a hunter confronts drac it will show up in his trail as 2 strings like "AZ"
-		// but we need to differenciate that from "C?" "S?" "HI" && "Dn"
-		char *dracTrailAbbrev = idToAbbrev(dracTrail[0]);
+		for ( i = 0; i < TRAIL_SIZE; i++ ){
+			//if ( dracTrail[i] == UNKNOWN_LOCATION ) continue;
+			if (DEBUGGING) printf("[%d]-", dracTrail[i]);
+			// get the last location drac was seen at
+			if ( isValidLoc(dracTrail[i]) ) { 
+				printf("  Drac is around  %s\n", idToAbbrev(dracTrail[i]));
+				attack(hv, dracTrail[i] , player, roundMod);  
+				return;
+			}
+		} 
 
-		if (isValidLoc(dracTrailAbbrev)) {
-			printf("Matched %s or %d\n",dracTrailAbbrev, dracTrail[0] );
-			attack(hv, dracTrail[0] , player, roundMod);  
-			return; // uncomment me when you implement attack() 
-		}
 
-	    if (DEBUGGING) printf("Round %d & dracTrailAbbrev = %s | " , round , dracTrailAbbrev);
 
 	    // we can reveal Dracula's 6th move (of round 5) in dracTrail if we rest all the hunters
 	    int rnd = round % 6;
 	    switch (rnd) {
 	    	case 0: 	// round 6 12 18 ..etc
 	    		restHunter(hv, player); 
+	    		for ( i = 0; i < NUM_PLAYERS; i++ ) { visited[i] = FALSE; }
 	    		break;
 	    		// 0th index of dracTrail is his current location, e.g in round 5 & now it will be revealed in round 6
 	    		// but he gets to move before we take our next move
 	    	case 1:		// dracula is found (round 7 13 19.. etc)
-	    		if (isValidLoc(dracTrailAbbrev)) {
+	    		if (isValidLoc(dracTrail[0])) {
 	    			attack(hv , dracTrail[0] , player, roundMod);
 	    		} else{
 	    			//printf("INVALID dracTrail: %d\n", dracTrail[0]);
-	    			goto inValid;
+	    			goto weLostHim; // if 6 rounds have passed without confronting drac No valid location will be in the trail
 	    		} break;
-	    	inValid:	
+	    	weLostHim:	//continue the normal search
  			default : mapSearch(hv, roundMod , player); // all other rounds - 1 2 3 4 5 - - 8 9 10 11 - - 14...
 	    } 
 	}
+
 }
 
 
 void mapSearch(HunterView hv , int roundMod , int player) {
 	possibleMoves = (LocationID *)(malloc(sizeof(LocationID)*NUM_MAP_LOCATIONS));
-	int bestMove = 0;
 	char *move;
 	int i = 0; 
 
@@ -111,35 +116,38 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
 		possibleMoves[i] = NOWHERE;
+		visited[i] = FALSE;
 	} 
-	//fill the array with all possible legal moves
+
+		//fill the array with all possible legal moves
 	possibleMoves = whereCanIgo(hv, &numLocations, TRUE, TRUE, TRUE);
 
-	//get current locationsID of hunters
+		//get current locationsID of hunters
 	int currLoc = whereIs(hv, player);
+		// set an initial move as the current location
 	move = idToAbbrev(currLoc);
+	printf(" Hunter currLoc is %s\n", move);
 
-		// printing the possibleMoves
- 	if (DEBUGGING) {
+ 	if (DEBUGGING) { 	// printing the possibleMoves
  		printf("Possible Moves = ");
  		for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
-			if (possibleMoves[i] != NOWHERE) printf("%s ",idToAbbrev(possibleMoves[i])); 
+ 			if ( possibleMoves[i] == UNKNOWN_LOCATION || !isValidLoc(possibleMoves[i]) ) continue;
+			printf("%s ",idToAbbrev(possibleMoves[i])); 
 		}
+		 		printf("\n");
 	}
-	// TODO
-	// replace the following with an algorithm to search the rest of the map with the other 3 hunters
-	// take into account when drac is found and attacked in round%6=1 how to expect his next move inorder to keep track of him
-	// always read his trail to check for HIDES or DOUBLEBACKS
+
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
 
-		if (possibleMoves[i] != NOWHERE && possibleMoves[i] != currLoc) {
-
-			bestMove = possibleMoves[i];
-			move = idToAbbrev(bestMove);
+		if ( possibleMoves[i] != UNKNOWN_LOCATION && possibleMoves[i] != currLoc && visited[i] == FALSE ) {
+			move = idToAbbrev(possibleMoves[i]);
+			if (DEBUGGING) printf("Setting %s as Visited\n", move);
+			visited[i] = TRUE;
 			break;
-	    }
+		}
 	}
 
+	// register the move wether found new bestMove or it is still currLoc
 	switch (player) { //or simply replace this switch with registerBestPlay(move, "im here");
 		case PLAYER_LORD_GODALMING : registerBestPlay(move, "Godalming Here"); break;
         case PLAYER_DR_SEWARD : registerBestPlay(move, "Seward Here"); break;
@@ -148,8 +156,7 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	}
 
 	free (possibleMoves);
-}
-
+} 
 
 void restHunter(HunterView hv, int hunterID) {
 		char *restingLoc = idToAbbrev(whereIs(hv, hunterID));
@@ -174,12 +181,9 @@ void attack(HunterView hv, LocationID dracFoundLoc, int player , int roundMod) {
 */
 	// also check that the dracFoundLoc being passed is valid place use isValidLoc()
 	//temporarly
-	if ( dracFoundLoc >= 1 && dracFoundLoc <= 70 ) {
-		printf("ATTACKING ////////////////////////////    %s    /////////////////////////////\n", idToName(dracFoundLoc));
-	} else {
-		printf("ATTACKING ////////////////////////////    %d    /////////////////////////////\n", dracFoundLoc);		
-	}
-	mapSearch(hv, roundMod , player); //remove me & the passed int roundMod
+	printf("Attacking %s\n", idToName(dracFoundLoc));
+
+	mapSearch(hv, roundMod , player); //remove me & the passed int roundMod from all called attack() instances
 }
 
 // matches a string to a regular expression
@@ -196,11 +200,13 @@ int isMatching( const char *string, char *pattern ) {
     return TRUE;
 }
 
-// takes location abbreviation from dracTrail and returns 1 if it is valid location
-int isValidLoc( char *dracTrailAbbrev ) {
-	if ( isMatching(dracTrailAbbrev,"[A-Z][A-Z]") 
-			&& strcmp(dracTrailAbbrev,"HI") != 0
-			&& dracTrail[0] >= 1 && dracTrail[0] <= 70 ) 
-		return 1;
+// takes locationID dracTrail and returns 1 if it is valid location
+int isValidLoc(int trail) {
+	if ( trail >= 0 && trail <= 70 ) return 1;
 	return 0;
 }
+//TODO
+/*
+- if hunter health is 9 after a being less than 9 that means he went to hospital
+- the attack is going throu one round. continue it to the next rounds
+*/

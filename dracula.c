@@ -10,9 +10,8 @@
 #define SIZE 16
 
 void decideDraculaMove(DracView gameState) { 
-    Round round = giveMeTheRound(gameState); 
-    printf("Round %d\n", round);
+   // char *possibleMove[SIZE] = {"VA","SJ","ZA","SZ","KL","CD","GA","BC","SO","SA","VA","D5"};
     char *possibleMove[SIZE] = {"BR","PR","VI","BD","KL","CD","GA","BC","SO","SA","VA","SJ","ZA","MU","NU","LI"};
-    registerBestPlay(possibleMove[round%SIZE], "sucker");    
+    registerBestPlay(possibleMove[giveMeTheRound(gameState)%SIZE], "sucker");    
 }
-
+	 	  		
