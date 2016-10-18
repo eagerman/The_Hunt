@@ -14,7 +14,7 @@
 //#include "Queue.h"
 
 #define LIFETHRESHOLD 6
-#define DEBUGGING 1
+#define DEBUGGING 0
 
 void restHunter(HunterView hv, int num);
 void mapSearch(HunterView hv , int roundMod, int player);
@@ -168,7 +168,7 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	huntersPossibleMoves = whereCanTheyGo(hv, nLocs, player, TRUE, TRUE, TRUE);	
 
 	if (DEBUGGING) { 
-		printf("Player%d PossibleMoves\n", player);
+		printf("Player%d PossibleMoves", player);
 		for (i=0; i < x; i++ ) printf("%s ",idToAbbrev(huntersPossibleMoves[i]));
 	}
 
@@ -314,5 +314,13 @@ int isValueInArray(int val, int *arr, int size){
 
 // send Hunters to cities aroud the location dracula was found in
 LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc) {
-	//TODO
+	//TODO//DraculasPossibleMoves
+	
+	// DraculasPossibleMoves
+	// numDracLocations
+
 }
+
+// TODO 
+// check if drac goes to sea or land from sea, we can then trace him
+//find shortest path that is rail
