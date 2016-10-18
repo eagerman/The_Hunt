@@ -154,17 +154,7 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 } 
 
 
-void restHunter(HunterView hv, int hunterID) {
-		char *restingLoc = idToAbbrev(whereIs(hv, hunterID));
-		if (DEBUGGING) printf("resting at %s\n",restingLoc);
-		registerBestPlay(restingLoc, "ZzzzZzzz");
-}
-
-
 void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundMod) {
-	//printf("Attacking %s\n", idToName(dracFoundLoc));
-	//mapSearch(hv, roundMod , player); //remove me & the passed int roundMod from all called attack() instances
-
 	int i, j, x = 0;
 	int *nLocs = &x;
 /*	LocationID *player0PossibleMoves;
@@ -227,35 +217,6 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 }
 
 
-/*
-// send Hunters to cities aroud the location dracula was found in
-LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc,) {
-	
-}
-*/
-
-// takes locationID and returns 1 if it is valid location
-int isValidLoc(int locID) {
-	if ( locID >= 0 && locID <= 70 ) return 1;
-	return 0;
-}
-
-// returns true if dractrail is valid i.e not -1
-int isValidTrail(int trail) {
-	if ( (trail >= 0 && trail <= 70) || (trail >= 100 && trail <= 108)) return 1;
-	return 0;
-}
-
-//checks if a value is in an array
-int isValueInArray(int val, int *arr, int size){
-    int i;
-    for (i=0; i < size; i++) {
-        if (arr[i] == val)
-            return TRUE;
-    }
-    return FALSE;
-}
-
 // find a path between two locations using breadth-first traversal
 LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *numEdges) {
 	assert(map != NULL);
@@ -312,6 +273,37 @@ LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *n
  	} 
 } 
 
+
+void restHunter(HunterView hv, int hunterID) {
+		char *restingLoc = idToAbbrev(whereIs(hv, hunterID));
+		if (DEBUGGING) printf("resting at %s\n",restingLoc);
+		registerBestPlay(restingLoc, "ZzzzZzzz");
+}
+
+
+// takes locationID and returns 1 if it is valid location
+int isValidLoc(int locID) {
+	if ( locID >= 0 && locID <= 70 ) return 1;
+	return 0;
+}
+
+
+// returns true if dractrail is valid i.e not -1
+int isValidTrail(int trail) {
+	if ( (trail >= 0 && trail <= 70) || (trail >= 100 && trail <= 108)) return 1;
+	return 0;
+}
+
+
+//checks if a value is in an array
+int isValueInArray(int val, int *arr, int size){
+    int i;
+    for (i=0; i < size; i++) {
+        if (arr[i] == val)
+            return TRUE;
+    }
+    return FALSE;
+}
 
 
 int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod){
