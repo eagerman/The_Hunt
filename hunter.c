@@ -223,6 +223,10 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	mapSearch(hv,roundMod,player);
 }
 
+int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod){
+	if ( (player+roundMod) % (NUM_PLAYERS-1) )
+}
+
 
 /*
 // send Hunters to cities aroud the location dracula was found in
