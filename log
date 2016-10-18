@@ -1,0 +1,1477 @@
+
+Checking your files...
+=== Modified Makefile
+LDLIBS = -lSegFault -rdynamic
+# Makefile for "Fury of Dracula": The Hunt
+
+# change these to suit your local C environment
+CC = gcc # -std=c99
+CFLAGS = -gdwarf-2 #-Wall 
+# do not change the following line
+BINS = dracula hunter
+# add any other *.o files that your system requires
+# (and add their dependencies below after DracView.o)
+# if you're not using Map.o or Places.o, you can remove them
+OBJS = GameView.o Map.o Places.o
+# add whatever system libraries you need here (e.g. -lm)
+LIBS = -ljansson 
+
+all : $(BINS)
+
+dracula : dracPlayer.o dracula.o DracView.o $(OBJS) $(LIBS) -ljansson 
+hunter : hunterPlayer.o hunter.o HunterView.o Queue.o $(OBJS) $(LIBS) -ljansson 
+ 
+
+dracPlayer.o : player.c Game.h DracView.h dracula.h
+	$(CC)  -gdwarf-2  -DI_AM_DRACULA -c player.c -o dracPlayer.o
+
+hunterPlayer.o : player.c Game.h HunterView.h hunter.h
+	$(CC)  -gdwarf-2  -c player.c -o hunterPlayer.o
+
+dracula.o : dracula.c Game.h DracView.h
+hunter.o : hunter.c Game.h HunterView.h
+Places.o : Places.c Places.h
+Map.o : Map.c Map.h Places.h
+GameView.o : GameView.c Globals.h GameView.h
+HunterView.o : HunterView.c Globals.h HunterView.h
+DracView.o : DracView.c Globals.h DracView.h
+Queue.o : Queue.c Queue.h
+
+# if you use other ADTs, add dependencies for them here
+
+clean :
+	rm -f $(BINS) *.o core
+
+
+=== Compiling Dracula ...
+gcc  -gdwarf-2    -c -o dracula.o dracula.c
+gcc   -gdwarf-2  -DI_AM_DRACULA -c player.c -o dracPlayer.o
+gcc  -gdwarf-2    -c -o DracView.o DracView.c
+gcc  -gdwarf-2    -c -o GameView.o GameView.c
+gcc  -gdwarf-2    -c -o Map.o Map.c
+gcc  -gdwarf-2    -c -o Places.o Places.c
+gcc    dracula.o dracPlayer.o DracView.o GameView.o Map.o Places.o /usr/lib/i386-linux-gnu/libjansson.so  -lSegFault -rdynamic -o dracula
+Dracula AI compiled OK
+=== Compiling Hunter ...
+gcc  -gdwarf-2    -c -o hunter.o hunter.c
+gcc   -gdwarf-2  -c player.c -o hunterPlayer.o
+gcc  -gdwarf-2    -c -o HunterView.o HunterView.c
+gcc  -gdwarf-2    -c -o Queue.o Queue.c
+gcc    hunter.o hunterPlayer.o HunterView.o Queue.o GameView.o Map.o Places.o /usr/lib/i386-linux-gnu/libjansson.so  -lSegFault -rdynamic -o hunter
+Hunter AI compiled OK
+
+=== Playing your Hunter against your Dracula ...
+
+   The FURY of DRACULA   
+          _..._          
+        .'     '.        
+       ; __   __ ;       
+       |/  \ /  \|       
+     |\| -- ' -- |/|     
+     |(| \o| |o/ |)|     
+     _\|    U    |/_     
+  .-'  | ,.___., |  '-.  
+  \    ;  V'-'V  ;    /  
+   `\   \       /   /`   
+     `\  '-...-'  /`     
+       `\  / \  /`       
+         `\\_//`         
+...........................
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": ""
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "GA",
+  "message": "Godalming Here",
+  "timer": 10
+}
+> Moving from: undefined
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: GA
+  message: Godalming Here
+  timer: 10
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "VI",
+  "message": "Seward Here",
+  "timer": 16
+}
+> Moving from: undefined
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: VI
+  message: Seward Here
+  timer: 16
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "PA",
+  "message": "Helsing Here",
+  "timer": 30
+}
+> Moving from: undefined
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: PA
+  message: Helsing Here
+  timer: 30
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "MA",
+  "message": "HARKER Here",
+  "timer": 24
+}
+> Moving from: undefined
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: MA
+  message: HARKER Here
+  timer: 24
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "BR",
+  "message": "sucker",
+  "timer": 29
+}
+> Moving from: undefined
+> Blood Points: 40
+> Player 4 made move:
+> +++
+  move: BR
+  message: sucker
+  timer: 29
+> ---
+> End of Round:  0
+> Starting Round:  1
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.."
+==============================================================
+Program Output(19): DracTrail: [C?] <- 
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "Godalming Here",
+  "timer": 135
+}
+> Moving from: GA
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: CD
+  message: Godalming Here
+  timer: 135
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD...."
+==============================================================
+Program Output(19): DracTrail: [C?] <- 
+==============================================================
+Move:  {
+  "move": "VI",
+  "message": "Seward Here",
+  "timer": 77
+}
+> Moving from: VI
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: VI
+  message: Seward Here
+  timer: 77
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI...."
+==============================================================
+Program Output(19): DracTrail: [C?] <- 
+==============================================================
+Move:  {
+  "move": "CO",
+  "message": "Helsing Here",
+  "timer": 75
+}
+> Moving from: PA
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: CO
+  message: Helsing Here
+  timer: 75
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO...."
+==============================================================
+Program Output(19): DracTrail: [C?] <- 
+==============================================================
+Move:  {
+  "move": "MA",
+  "message": "HARKER Here",
+  "timer": 140
+}
+> Moving from: MA
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: MA
+  message: HARKER Here
+  timer: 140
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "PR",
+  "message": "sucker",
+  "timer": 27
+}
+> Moving from: BR
+> Blood Points: 40
+> Legal Drac moves: HA LI PR D1 HI
+> Player 4 made move:
+> +++
+  move: PR
+  message: sucker
+  timer: 27
+> ---
+> End of Round:  1
+> Starting Round:  2
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T..."
+==============================================================
+Program Output(27): DracTrail: [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "Godalming Here",
+  "timer": 152
+}
+> Moving from: CD
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: CD
+  message: Godalming Here
+  timer: 152
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD...."
+==============================================================
+Program Output(27): DracTrail: [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "MU",
+  "message": "Seward Here",
+  "timer": 86
+}
+> Moving from: VI
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: MU
+  message: Seward Here
+  timer: 86
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU...."
+==============================================================
+Program Output(27): DracTrail: [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "HA",
+  "message": "Helsing Here",
+  "timer": 85
+}
+> Moving from: CO
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: HA
+  message: Helsing Here
+  timer: 85
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA...."
+==============================================================
+Program Output(27): DracTrail: [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "MA",
+  "message": "HARKER Here",
+  "timer": 163
+}
+> Moving from: MA
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: MA
+  message: HARKER Here
+  timer: 163
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "VI",
+  "message": "sucker",
+  "timer": 70
+}
+> Moving from: PR
+> Blood Points: 40
+> Legal Drac moves: NU VI D1 D2 HI
+> Player 4 made move:
+> +++
+  move: VI
+  message: sucker
+  timer: 70
+> ---
+> End of Round:  2
+> Starting Round:  3
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T..."
+==============================================================
+Program Output(35): DracTrail: [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "Godalming Here",
+  "timer": 171
+}
+> Moving from: CD
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: CD
+  message: Godalming Here
+  timer: 171
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD...."
+==============================================================
+Program Output(35): DracTrail: [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "ZA",
+  "message": "Seward Here",
+  "timer": 176
+}
+> Moving from: MU
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: ZA
+  message: Seward Here
+  timer: 176
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA...."
+==============================================================
+Program Output(35): DracTrail: [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "CO",
+  "message": "Helsing Here",
+  "timer": 180
+}
+> Moving from: HA
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: CO
+  message: Helsing Here
+  timer: 180
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO...."
+==============================================================
+Program Output(35): DracTrail: [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "CA",
+  "message": "HARKER Here",
+  "timer": 225
+}
+> Moving from: MA
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: CA
+  message: HARKER Here
+  timer: 225
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "BD",
+  "message": "sucker",
+  "timer": 50
+}
+> Moving from: VI
+> Blood Points: 40
+> Legal Drac moves: BD MU ZA D1 D2 HI
+> Player 4 made move:
+> +++
+  move: BD
+  message: sucker
+  timer: 50
+> ---
+> End of Round:  3
+> Starting Round:  4
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T..."
+==============================================================
+Program Output(43): DracTrail: [C?] <- [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "Godalming Here",
+  "timer": 194
+}
+> Moving from: CD
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: CD
+  message: Godalming Here
+  timer: 194
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD...."
+==============================================================
+Program Output(43): DracTrail: [C?] <- [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "SZ",
+  "message": "Seward Here",
+  "timer": 197
+}
+> Moving from: ZA
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: SZ
+  message: Seward Here
+  timer: 197
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ...."
+==============================================================
+Program Output(43): DracTrail: [C?] <- [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "PA",
+  "message": "Helsing Here",
+  "timer": 201
+}
+> Moving from: CO
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: PA
+  message: Helsing Here
+  timer: 201
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA...."
+==============================================================
+Program Output(43): DracTrail: [C?] <- [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "CA",
+  "message": "HARKER Here",
+  "timer": 114
+}
+> Moving from: CA
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: CA
+  message: HARKER Here
+  timer: 114
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "KL",
+  "message": "sucker",
+  "timer": 58
+}
+> Moving from: BD
+> Blood Points: 40
+> Legal Drac moves: KL SZ ZA D1 D2 HI
+> Player 4 made move:
+> +++
+  move: KL
+  message: sucker
+  timer: 58
+> ---
+> End of Round:  4
+> Starting Round:  5
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DC?T..."
+==============================================================
+Program Output(51): DracTrail: [C?] <- [C?] <- [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "Godalming Here",
+  "timer": 212
+}
+> Moving from: CD
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: CD
+  message: Godalming Here
+  timer: 212
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DC?T... GCD...."
+==============================================================
+Program Output(51): DracTrail: [C?] <- [C?] <- [C?] <- [C?] <- [C?] <- 
+==============================================================
+Move:  {
+  "move": "KL",
+  "message": "Seward Here",
+  "timer": 217
+}
+> Moving from: SZ
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: KL
+  message: Seward Here
+  timer: 217
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.."
+==============================================================
+Program Output(239): 
+DraculasPossibleMoves are: BE BC BD CD GA KL SZ 
+DracTrail: [KL] <-   Drac is around  KL
+Player2 PossibleMoves
+BA BO BU CF CO FR GE LE MA MR NA PA SR ST 
+currLoc =  PA
+Finding path from PA KL..
+
+Path is 5 edges: ST-->MU-->VI-->BD-->KL-->
+
+==============================================================
+Move:  {
+  "move": "ST",
+  "message": "Coming for you drac",
+  "timer": 433
+}
+> Moving from: PA
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: ST
+  message: Coming for you drac
+  timer: 433
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST...."
+==============================================================
+Program Output(227): 
+DraculasPossibleMoves are: BE BC BD CD GA KL SZ 
+DracTrail: [KL] <-   Drac is around  KL
+Player3 PossibleMoves
+AO CA GR LS MA 
+currLoc =  CA
+Finding path from CA KL..
+
+Path is 8 edges: AO-->MS-->MR-->GO-->VE-->VI-->BD-->KL-->
+
+==============================================================
+Move:  {
+  "move": "AO",
+  "message": "Coming for you drac",
+  "timer": 229
+}
+> Moving from: CA
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: AO
+  message: Coming for you drac
+  timer: 229
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "sucker",
+  "timer": 71
+}
+> Moving from: KL
+> Blood Points: 30
+> Legal Drac moves: BE BC CD GA SZ D1 D2 HI
+> Player 4 made move:
+> +++
+  move: CD
+  message: sucker
+  timer: 71
+> ---
+> End of Round:  5
+> Starting Round:  6
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT..."
+==============================================================
+Program Output(150): 
+DraculasPossibleMoves are: CD GA KL 
+DracTrail: [CD] <-   Drac is around  CD
+Player0 PossibleMoves
+CD GA KL 
+currLoc =  CD
+Finding path from CD CD..
+
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "Godalming Here",
+  "timer": 217
+}
+> Moving from: CD
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: CD
+  message: Godalming Here
+  timer: 217
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.."
+==============================================================
+Program Output(186): 
+DraculasPossibleMoves are: CD GA KL 
+DracTrail: [CD] <-   Drac is around  CD
+Player1 PossibleMoves
+BE BC BD CD GA KL SZ 
+currLoc =  KL
+Finding path from KL CD..
+
+Path is 1 edges: CD-->
+
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "Coming for you drac",
+  "timer": 351
+}
+> Moving from: KL
+> Life Points: 3
+> Player 1 made move:
+> +++
+  move: CD
+  message: Coming for you drac
+  timer: 351
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD..."
+==============================================================
+Program Output(212): 
+DraculasPossibleMoves are: CD GA KL 
+DracTrail: [CD] <-   Drac is around  CD
+Player2 PossibleMoves
+BU CO FR GE MU NU PA ST ZU 
+currLoc =  ST
+Finding path from ST CD..
+
+Path is 5 edges: MU-->VI-->BD-->KL-->CD-->
+
+==============================================================
+Move:  {
+  "move": "MU",
+  "message": "Coming for you drac",
+  "timer": 447
+}
+> Moving from: ST
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: MU
+  message: Coming for you drac
+  timer: 447
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU...."
+==============================================================
+Program Output(222): 
+DraculasPossibleMoves are: CD GA KL 
+DracTrail: [CD] <-   Drac is around  CD
+Player3 PossibleMoves
+AO BB CA EC GW IR LS MS NS 
+currLoc =  AO
+Finding path from AO CD..
+
+Path is 7 edges: MS-->TS-->IO-->BS-->CN-->GA-->CD-->
+
+==============================================================
+Move:  {
+  "move": "MS",
+  "message": "Coming for you drac",
+  "timer": 243
+}
+> Moving from: AO
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: MS
+  message: Coming for you drac
+  timer: 243
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "GA",
+  "message": "sucker",
+  "timer": 82
+}
+> Moving from: CD
+> Blood Points: 20
+> Legal Drac moves: GA D1 D2 HI
+> Player 4 made move:
+> +++
+  move: GA
+  message: sucker
+  timer: 82
+> ---
+> End of Round:  6
+> Starting Round:  7
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DC?T.V."
+==============================================================
+Program Output(134): DracTrail: [C?] <- [CD] <-   Drac is around  CD
+Player0 PossibleMoves
+CD GA KL 
+currLoc =  CD
+Finding path from CD CD..
+resting at CD
+
+==============================================================
+Move:  {
+  "move": "CD",
+  "message": "ZzzzZzzz",
+  "timer": 163
+}
+> Moving from: CD
+> Life Points: 6
+> Player 0 made move:
+> +++
+  move: CD
+  message: ZzzzZzzz
+  timer: 163
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DC?T.V. GCD...."
+==============================================================
+Program Output(160): DracTrail: [C?] <- [CD] <-   Drac is around  CD
+Player1 PossibleMoves
+BE SJ JM SZ ZA 
+currLoc =  JM
+Finding path from JM CD..
+
+Path is 3 edges: BE-->KL-->CD-->
+
+==============================================================
+Move:  {
+  "move": "BE",
+  "message": "Coming for you drac",
+  "timer": 172
+}
+> Moving from: JM
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: BE
+  message: Coming for you drac
+  timer: 172
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DC?T... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DC?T.V. GCD.... SBE...."
+==============================================================
+Program Output(174): DracTrail: [C?] <- [CD] <-   Drac is around  CD
+Player2 PossibleMoves
+MI MU NU ST VE VI ZA ZU 
+currLoc =  MU
+Finding path from MU CD..
+
+Path is 4 edges: VI-->BD-->KL-->CD-->
+
+==============================================================
+Move:  {
+  "move": "VI",
+  "message": "Coming for you drac",
+  "timer": 388
+}
+> Moving from: MU
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: VI
+  message: Coming for you drac
+  timer: 388
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DC?T.V. GCD.... SBE.... HVIT..."
+==============================================================
+Program Output(181): DracTrail: [C?] <- [CD] <-   Drac is around  CD
+Player3 PossibleMoves
+AL AO BA CG MR MS TS 
+currLoc =  MS
+Finding path from MS CD..
+
+Path is 6 edges: TS-->IO-->BS-->CN-->GA-->CD-->
+
+==============================================================
+Move:  {
+  "move": "TS",
+  "message": "Coming for you drac",
+  "timer": 222
+}
+> Moving from: MS
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: TS
+  message: Coming for you drac
+  timer: 222
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "BC",
+  "message": "sucker",
+  "timer": 770
+}
+> Moving from: GA
+> Blood Points: 20
+> Legal Drac moves: BC CN D1 D2 D3 HI
+> Player 4 made move:
+> +++
+  move: BC
+  message: sucker
+  timer: 770
+> ---
+> End of Round:  7
+> Starting Round:  8
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DC?T.V. GCD.... SBE.... HVIT... MTS.... DC?T.M."
+==============================================================
+Program Output(128): DracTrail: [C?] <- [C?] <- [CD] <-   Drac is around  CD
+Player0 PossibleMoves
+CD GA KL 
+currLoc =  CD
+Finding path from CD CD..
+
+==============================================================
+Move:  {
+  "move": "GA",
+  "message": "Godalming Here",
+  "timer": 396
+}
+> Moving from: CD
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: GA
+  message: Godalming Here
+  timer: 396
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DC?T.M. GGAT..."
+==============================================================
+Program Output(161): DracTrail: [C?] <- [GA] <-   Drac is around  GA
+Player1 PossibleMoves
+BE BC KL SJ SO JM SZ 
+currLoc =  BE
+Finding path from BE GA..
+
+Path is 2 edges: BC-->GA-->
+
+==============================================================
+Move:  {
+  "move": "BC",
+  "message": "Coming for you drac",
+  "timer": 3153
+}
+> Moving from: BE
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: BC
+  message: Coming for you drac
+  timer: 3153
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DC?T... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.."
+==============================================================
+Program Output(208): 
+DraculasPossibleMoves are: BE BC CN GA KL SO 
+DracTrail: [BC] <-   Drac is around  BC
+Player2 PossibleMoves
+BR BD MU PR SZ VE VI ZA 
+currLoc =  VI
+Finding path from VI BC..
+
+Path is 3 edges: BD-->KL-->BC-->
+
+==============================================================
+Move:  {
+  "move": "BD",
+  "message": "Coming for you drac",
+  "timer": 423
+}
+> Moving from: VI
+> Life Points: 7
+> Player 2 made move:
+> +++
+  move: BD
+  message: Coming for you drac
+  timer: 423
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT..."
+==============================================================
+Program Output(210): 
+DraculasPossibleMoves are: BE BC CN GA KL SO 
+DracTrail: [BC] <-   Drac is around  BC
+Player3 PossibleMoves
+CG GO IO MS NP RO TS 
+currLoc =  TS
+Finding path from TS BC..
+
+Path is 4 edges: IO-->BS-->CN-->BC-->
+
+==============================================================
+Move:  {
+  "move": "IO",
+  "message": "Coming for you drac",
+  "timer": 475
+}
+> Moving from: TS
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: IO
+  message: Coming for you drac
+  timer: 475
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "sucker",
+  "timer": 105
+}
+> Moving from: BC
+> Blood Points: 10
+> Legal Drac moves: BE CN SO D1 D2 D4 HI
+> Player 4 made move:
+> +++
+  move: SO
+  message: sucker
+  timer: 105
+> ---
+> End of Round:  8
+> Starting Round:  9
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DC?T..."
+==============================================================
+Program Output(150): DracTrail: [C?] <- [BC] <-   Drac is around  BC
+Player0 PossibleMoves
+BC CD CN GA KL 
+currLoc =  GA
+Finding path from GA BC..
+
+Path is 1 edges: BC-->
+
+==============================================================
+Move:  {
+  "move": "BC",
+  "message": "Coming for you drac",
+  "timer": 346
+}
+> Moving from: GA
+> Life Points: 7
+> Player 0 made move:
+> +++
+  move: BC
+  message: Coming for you drac
+  timer: 346
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DC?T... GBC...."
+==============================================================
+Program Output(149): DracTrail: [C?] <- [BC] <-   Drac is around  BC
+Player1 PossibleMoves
+BE BC BD CN GA KL SO SZ 
+currLoc =  BC
+Finding path from BC BC..
+resting at BC
+
+==============================================================
+Move:  {
+  "move": "BC",
+  "message": "ZzzzZzzz",
+  "timer": 350
+}
+> Moving from: BC
+> Life Points: 3
+> Player 1 made move:
+> +++
+  move: BC
+  message: ZzzzZzzz
+  timer: 350
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DC?T... GBC.... SBC...."
+==============================================================
+Program Output(179): DracTrail: [C?] <- [BC] <-   Drac is around  BC
+Player2 PossibleMoves
+BE BR BC BD CN GA KL PR SO SZ VE VI ZA 
+currLoc =  BD
+Finding path from BD BC..
+
+Path is 2 edges: KL-->BC-->
+
+==============================================================
+Move:  {
+  "move": "KL",
+  "message": "Coming for you drac",
+  "timer": 361
+}
+> Moving from: BD
+> Life Points: 5
+> Player 2 made move:
+> +++
+  move: KL
+  message: Coming for you drac
+  timer: 361
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DC?T... GBC.... SBC.... HKL...."
+==============================================================
+Program Output(166): DracTrail: [C?] <- [BC] <-   Drac is around  BC
+Player3 PossibleMoves
+AS AT BS IO SA TS VA 
+currLoc =  IO
+Finding path from IO BC..
+
+Path is 3 edges: BS-->CN-->BC-->
+
+==============================================================
+Move:  {
+  "move": "BS",
+  "message": "Coming for you drac",
+  "timer": 220
+}
+> Moving from: IO
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: BS
+  message: Coming for you drac
+  timer: 220
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "SA",
+  "message": "sucker",
+  "timer": 222
+}
+> Moving from: SO
+> Blood Points: 10
+> Legal Drac moves: BE SA SJ VR VA D1 D2 HI
+> Player 4 made move:
+> +++
+  move: SA
+  message: sucker
+  timer: 222
+> ---
+> End of Round:  9
+> Starting Round:  10
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DC?T... GBC.... SBC.... HKL.... MBS.... DC?T..."
+==============================================================
+Program Output(143): DracTrail: [C?] <- [C?] <- [BC] <-   Drac is around  BC
+Player0 PossibleMoves
+BE BC BD CN GA KL SO SZ 
+currLoc =  BC
+Finding path from BC BC..
+
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "Godalming Here",
+  "timer": 487
+}
+> Moving from: BC
+> Life Points: 7
+> Player 0 made move:
+> +++
+  move: SO
+  message: Godalming Here
+  timer: 487
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT..."
+==============================================================
+Program Output(162): DracTrail: [C?] <- [SO] <-   Drac is around  SO
+Player1 PossibleMoves
+BE BC BD CN GA KL SO SZ VI 
+currLoc =  BC
+Finding path from BC SO..
+
+Path is 1 edges: SO-->
+
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "Coming for you drac",
+  "timer": 374
+}
+> Moving from: BC
+> Life Points: 6
+> Player 1 made move:
+> +++
+  move: SO
+  message: Coming for you drac
+  timer: 374
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT... SSO...."
+==============================================================
+Program Output(161): DracTrail: [C?] <- [SO] <-   Drac is around  SO
+Player2 PossibleMoves
+BE BC BD CD GA KL SZ 
+currLoc =  KL
+Finding path from KL SO..
+
+Path is 2 edges: BE-->SO-->
+
+==============================================================
+Move:  {
+  "move": "BE",
+  "message": "Coming for you drac",
+  "timer": 202
+}
+> Moving from: KL
+> Life Points: 5
+> Player 2 made move:
+> +++
+  move: BE
+  message: Coming for you drac
+  timer: 202
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT... SSO.... HBE...."
+==============================================================
+Program Output(152): DracTrail: [C?] <- [SO] <-   Drac is around  SO
+Player3 PossibleMoves
+BS CN IO VR 
+currLoc =  BS
+Finding path from BS SO..
+
+Path is 2 edges: VR-->SO-->
+
+==============================================================
+Move:  {
+  "move": "VR",
+  "message": "Coming for you drac",
+  "timer": 207
+}
+> Moving from: BS
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: VR
+  message: Coming for you drac
+  timer: 207
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DSAT... GSOT... SSO.... HBE.... MVR...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "VA",
+  "message": "sucker",
+  "timer": 128
+}
+> Moving from: SA
+> Blood Points: 10
+> Legal Drac moves: VA IO D1 D2 HI
+> Player 4 made move:
+> +++
+  move: VA
+  message: sucker
+  timer: 128
+> ---
+> End of Round:  10
+> Starting Round:  11
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT... SSO.... HBE.... MVR.... DC?T..."
+==============================================================
+Program Output(160): DracTrail: [C?] <- [C?] <- [SO] <-   Drac is around  SO
+Player0 PossibleMoves
+BE BC BD SA SJ SO SZ VA VR 
+currLoc =  SO
+Finding path from SO SO..
+resting at SO
+
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "ZzzzZzzz",
+  "timer": 388
+}
+> Moving from: SO
+> Life Points: 5
+> Player 0 made move:
+> +++
+  move: SO
+  message: ZzzzZzzz
+  timer: 388
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT... SSO.... HBE.... MVR.... DC?T... GSO...."
+==============================================================
+Program Output(154): DracTrail: [C?] <- [C?] <- [SO] <-   Drac is around  SO
+Player1 PossibleMoves
+BE BC SA SJ SO VA VR 
+currLoc =  SO
+Finding path from SO SO..
+resting at SO
+
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "ZzzzZzzz",
+  "timer": 359
+}
+> Moving from: SO
+> Life Points: 6
+> Player 1 made move:
+> +++
+  move: SO
+  message: ZzzzZzzz
+  timer: 359
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT... SSO.... HBE.... MVR.... DC?T... GSO.... SSO...."
+==============================================================
+Program Output(164): DracTrail: [C?] <- [C?] <- [SO] <-   Drac is around  SO
+Player2 PossibleMoves
+BE BC KL SJ SO JM SZ 
+currLoc =  BE
+Finding path from BE SO..
+
+Path is 1 edges: SO-->
+
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "Coming for you drac",
+  "timer": 211
+}
+> Moving from: BE
+> Life Points: 5
+> Player 2 made move:
+> +++
+  move: SO
+  message: Coming for you drac
+  timer: 211
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT... SSO.... HBE.... MVR.... DC?T... GSO.... SSO.... HSO...."
+==============================================================
+Program Output(161): DracTrail: [C?] <- [C?] <- [SO] <-   Drac is around  SO
+Player3 PossibleMoves
+BE BS CN SA SO VR 
+currLoc =  VR
+Finding path from VR SO..
+
+Path is 1 edges: SO-->
+
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "Coming for you drac",
+  "timer": 405
+}
+> Moving from: VR
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: SO
+  message: Coming for you drac
+  timer: 405
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DSAT... GSOT... SSO.... HBE.... MVR.... DVAT... GSO.... SSO.... HSO.... MSO...."
+==============================================================
+Program Output(0): 
+==============================================================
+Move:  {
+  "move": "SJ",
+  "message": "sucker",
+  "timer": 144
+}
+> Moving from: VA
+> Blood Points: 10
+> Legal Drac moves: AT SJ IO D1 D2 D3 HI
+> Player 4 made move:
+> +++
+  move: SJ
+  message: sucker
+  timer: 144
+> ---
+> End of Round:  11
+> Starting Round:  12
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "pastPlays": "GGA.... SVI.... HPA.... MMA.... DC?.V.. GCD.... SVI.... HCO.... MMA.... DC?T... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DC?T... GSOT... SSO.... HBE.... MVR.... DC?T... GSO.... SSO.... HSO.... MSO.... DC?T..."
+==============================================================
+Program Output(148): DracTrail: [C?] <- [C?] <- [C?] <- [SO] <-   Drac is around  SO
+Player0 PossibleMoves
+BE BC SA SJ SO VA VR 
+currLoc =  SO
+Finding path from SO SO..
+
+==============================================================
+Move:  {
+  "move": "SJ",
+  "message": "Godalming Here",
+  "timer": 485
+}
+> Moving from: SO
+> Life Points: 8
+> Player 0 made move:
+> +++
+  move: SJ
+  message: Godalming Here
+  timer: 485
+> ---
+--------------------------------------------------------------------------
+> End of game: 
+> +++
+  score: 335
+  revealedPastPlays: GGA.... SVI.... HPA.... MMA.... DBR.V.. GCD.... SVI.... HCO.... MMA.... DPRT... GCD.... SMU.... HHA.... MMA.... DVIT... GCD.... SZA.... HCO.... MCA.... DBDT... GCD.... SSZ.... HPA.... MCA.... DKLT... GCD.... SKLTD.. HST.... MAO.... DCDT... GCDTD.. SCDD... HMU.... MMS.... DGAT.V. GCD.... SBE.... HVIT... MTS.... DBCT.M. GGAT... SBCTD.. HBDT... MIO.... DSOT... GBC.... SBC.... HKL.... MBS.... DSAT... GSOT... SSO.... HBE.... MVR.... DVAT... GSO.... SSO.... HSO.... MSO.... DSJT... GSJTD..
+  messages: ["Godalming Here","Seward Here","Helsing Here","HARKER Here","sucker","Godalming Here","Seward Here","Helsing Here","HARKER Here","sucker","Godalming Here","Seward Here","Helsing Here","HARKER Here","sucker","Godalming Here","Seward Here","Helsing Here","HARKER Here","sucker","Godalming Here","Seward Here","Helsing Here","HARKER Here","sucker","Godalming Here","Seward Here","Coming for you drac","Coming for you drac","sucker","Godalming Here","Coming for you drac","Coming for you drac","Coming for you drac","sucker","ZzzzZzzz","Coming for you drac","Coming for you drac","Coming for you drac","sucker","Godalming Here","Coming for you drac","Coming for you drac","Coming for you drac","sucker","Coming for you drac","ZzzzZzzz","Coming for you drac","Coming for you drac","sucker","Godalming Here","Coming for you drac","Coming for you drac","Coming for you drac","sucker","ZzzzZzzz","ZzzzZzzz","Coming for you drac","Coming for you drac","sucker","Godalming Here"]
+> ---
+> Game Over
+335
+12
+
