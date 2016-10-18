@@ -22,6 +22,7 @@ int isValidLoc(int trail);
 LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *length);
 int isValueInArray(int val, int *arr, int size);
 int isValidTrail(int trail);
+int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod);
 
 //Global Variables
 static LocationID dracTrail[TRAIL_SIZE];
@@ -234,19 +235,10 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	mapSearch(hv,roundMod,player);
 }
 
-<<<<<<< HEAD
 int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod){
-	if ( (player+roundMod) % (NUM_PLAYERS-1) )
+	//if ( (player+roundMod) % (NUM_PLAYERS-1) )
 }
 
-
-=======
-// takes locationID and returns 1 if it is valid location
-int isValidLoc(int locID) {
-	if ( locID >= 0 && locID <= 70 ) return 1;
-	return 0;
-}
->>>>>>> 552dc7f3f6eb5c2f9b184c33acd94529ea76c138
 /*
 // send Hunters to cities aroud the location dracula was found in
 LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc,) {
