@@ -204,6 +204,7 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 			while ( i < x && !fasterMove) {
 				if (isValueInArray(pathToDrac[j], huntersPossibleMoves, x)) {
 					moveID = pathToDrac[j];
+					fasterMove = TRUE;
 					break;
 				} 
 				i++;
