@@ -23,13 +23,14 @@ LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *l
 int isValueInArray(int val, int *arr, int size);
 int isValidTrail(int trail);
 int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod);
+LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc);
+
 
 //Global Variables
 static LocationID dracTrail[TRAIL_SIZE];
 static int lifePts[NUM_PLAYERS];
 static LocationID *possibleMoves;
 static int visited[NUM_MAP_LOCATIONS];
-static int didHealthDrop[NUM_PLAYERS];
 static int *DraculasPossibleMoves;
 static int numDracLocations;
 static int currLoc;
@@ -64,7 +65,7 @@ void decideHunterMove(HunterView hv)
 
 	    if (isValidLoc(dracTrail[0])){
 			int *numDracLocationsPtr = &numDracLocations;
-			DraculasPossibleMoves = whereCanTheyGo(hv, numDracLocationsPtr, TRUE, TRUE, FALSE, TRUE);
+			DraculasPossibleMoves = whereCanTheyGo(hv, numDracLocationsPtr, PLAYER_DRACULA, TRUE, FALSE, TRUE);
 				printf("\nDraculasPossibleMoves are: ");
 				for ( i = 0; i < numDracLocations; i++) printf("%s ",idToAbbrev(DraculasPossibleMoves[i]) );
 				printf("\n");
@@ -107,15 +108,6 @@ void decideHunterMove(HunterView hv)
 
 }
 
-// returns the current locationID of a hunter
-int getCurrLoc(HunterView hv, int player) {
-	if ( didHealthDrop[player] && lifePts[player] == 9 ) {
-		didHealthDrop[player] = FALSE;
-		return ST_JOSEPH_AND_ST_MARYS;
-	} else {
-		return whereIs(hv, player);
-	}
-}
 
 void mapSearch(HunterView hv , int roundMod , int player) {
 	possibleMoves = (LocationID *)(malloc(sizeof(LocationID)*NUM_MAP_LOCATIONS));
@@ -200,7 +192,6 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 
 	pathToDrac = getShortestPath(map,currLoc,dracFoundLoc,pathLength);
 
-
 	if ( len > 0 ) { // if path array is not empty
 		if (DEBUGGING) {
 			printf("\nPath is %d edges: ",len);
@@ -235,9 +226,6 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	mapSearch(hv,roundMod,player);
 }
 
-int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod){
-	//if ( (player+roundMod) % (NUM_PLAYERS-1) )
-}
 
 /*
 // send Hunters to cities aroud the location dracula was found in
@@ -269,9 +257,7 @@ int isValueInArray(int val, int *arr, int size){
 }
 
 // find a path between two locations using breadth-first traversal
-
 LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *numEdges) {
-
 	assert(map != NULL);
 	int numOfNeighbers; // number of neighbors
 	int *numLocs = &numOfNeighbers;
@@ -293,7 +279,6 @@ LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *n
 		pred[i] = -1;
 		dist[i] = 0;
 	}
-
 
 	visited[currLoc] = TRUE;
 	Queue q = newQueue(); 
@@ -328,3 +313,14 @@ LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *n
 } 
 
 
+
+int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod){
+	//if ( (player+roundMod) % (NUM_PLAYERS-1) )
+	// TODO
+}
+
+
+// send Hunters to cities aroud the location dracula was found in
+LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc) {
+	//TODO
+}
