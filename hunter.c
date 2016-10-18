@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 #include "Game.h"
 #include "HunterView.h"
 #include "hunter.h"
@@ -13,17 +14,17 @@
 //#include "Queue.h"
 
 #define LIFETHRESHOLD 6
-#define DEBUGGING 0
+#define DEBUGGING 1
 
 void restHunter(HunterView hv, int num);
 void mapSearch(HunterView hv , int roundMod, int player);
 void attack(HunterView hv, LocationID dracFoundLoc, int player , int roundMod);
 int isValidLoc(int trail);
 LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *length);
+LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc);
 int isValueInArray(int val, int *arr, int size);
 int isValidTrail(int trail);
 int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod);
-LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc);
 
 
 //Global Variables
@@ -114,12 +115,12 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	char *move;
 	int n, i = 0; 
 	int *numLocations = &n;
+	time_t t;
 
 	if ( lifePts[player] <= LIFETHRESHOLD ) { restHunter(hv, player); return; }
 
 	for (i = 0; i < NUM_MAP_LOCATIONS; i++) {
 		possibleMoves[i] = NOWHERE;
-		visited[i] = FALSE;
 	} 
 
 		//fill the array with all possible legal moves
@@ -127,20 +128,17 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 
 		//get current locationsID of hunters
 	currLoc = whereIs(hv, player);
-	printf("currLoc =  %s\n", idToAbbrev(currLoc));
 
 		// set an initial move as the current location
 	move = idToAbbrev(currLoc);
 
-	for (i = 0; i < n; i++) {
+    srand((unsigned) time(&t));
 
-		if ( isValidLoc(possibleMoves[i]) && possibleMoves[i] != currLoc
-						 && visited[i] == FALSE ) {
-			move = idToAbbrev(possibleMoves[i]);
-			visited[i] = TRUE;
-			break;
-		}
+    i = rand() % n;
+	if ( isValidLoc(possibleMoves[i]) && possibleMoves[i] != currLoc ) {
+		move = idToAbbrev(possibleMoves[i]);
 	}
+	
 
 	// register the move wether found new bestMove or it is still currLoc
 	switch (player) { //or simply replace this switch with registerBestPlay(move, "im here");
@@ -169,12 +167,17 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	// fill the current hunter's possibleMoves Array
 	huntersPossibleMoves = whereCanTheyGo(hv, nLocs, player, TRUE, TRUE, TRUE);	
 
+	if (DEBUGGING) { 
+		printf("Player%d PossibleMoves\n", player);
+		for (i=0; i < x; i++ ) printf("%s ",idToAbbrev(huntersPossibleMoves[i]));
+	}
+
 	// create a Map representaton of europe
 	Map map = newMap(); 
 
 	currLoc = whereIs(hv, player);
 
-		printf("currLoc =  %s\n", idToAbbrev(currLoc));
+	if (DEBUGGING) printf("\ncurrLoc =  %s\n", idToAbbrev(currLoc));
 	LocationID *pathToDrac;
 	int len;
 	int *pathLength = &len;
@@ -188,23 +191,26 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 			for ( i = 0 ; i < len; i++ ) printf("%s-->",idToAbbrev(pathToDrac[i])); 
 		}
 		//move the hunter thru the path one step/turn
-		LocationID moveID = pathToDrac[0];
+		LocationID moveID = currLoc; // we dont want to set this to pathToDrac[0] because
+									// in some rounds it might be illegal move if it is only rail
 
-		// see if we can do rail multi move
+		// see if rail is legal and if we can do rail multi move
 		i = 0; int fasterMove = FALSE;
+
 		 // reading the path from the closest place to destination down to 1 place before currLoc
 		puts("");
-		for ( j = len-1; j > 0; j-- ) {
+		for ( j = len-1; j >= 0; j-- ) {
 			i=0;
 			while ( i < x && !fasterMove) {
 				if (isValueInArray(pathToDrac[j], huntersPossibleMoves, x)) {
-				moveID = pathToDrac[j];
-				break;
-			}
+					moveID = pathToDrac[j];
+					break;
+				} 
 				i++;
 			}
 			if (fasterMove) break;
 		}
+
 
 		char *move =  idToAbbrev(moveID);
 		if (isValidLoc(moveID)) registerBestPlay(move, "Coming for you drac");
@@ -303,12 +309,6 @@ int isValueInArray(int val, int *arr, int size){
             return TRUE;
     }
     return FALSE;
-}
-
-
-int isLegalMove(HunterView hv, PlayerID player, LocationID moveID, int roundMod){
-	//if ( (player+roundMod) % (NUM_PLAYERS-1) )
-	// TODO
 }
 
 
