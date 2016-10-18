@@ -12,15 +12,14 @@
 #include "Queue.h"
 //#include "Queue.h"
 
-#define LIFETHRESHOLD 3
+#define LIFETHRESHOLD 6
 #define DEBUGGING 0
 
 void restHunter(HunterView hv, int num);
-int getCurrLoc(HunterView hv, int player);
 void mapSearch(HunterView hv , int roundMod, int player);
 void attack(HunterView hv, LocationID dracFoundLoc, int player , int roundMod);
 int isValidLoc(int trail);
-LocationID *getShortestPath(Map map, LocationID src, LocationID dest, int *length);
+LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *length);
 int isValueInArray(int val, int *arr, int size);
 int isValidTrail(int trail);
 
@@ -32,6 +31,7 @@ static int visited[NUM_MAP_LOCATIONS];
 static int didHealthDrop[NUM_PLAYERS];
 static int *DraculasPossibleMoves;
 static int numDracLocations;
+static int currLoc;
 
 void decideHunterMove(HunterView hv)
 {
@@ -58,8 +58,6 @@ void decideHunterMove(HunterView hv)
 
     } else { // round 1 up
 
-    	// check if the hunter is in hospital
-		if ( lifePts[player] < 9 ) didHealthDrop[player] = TRUE;
 	    // get dracTrail
 	    giveMeTheTrail(hv, PLAYER_DRACULA , dracTrail);
 
@@ -118,7 +116,6 @@ int getCurrLoc(HunterView hv, int player) {
 	}
 }
 
-
 void mapSearch(HunterView hv , int roundMod , int player) {
 	possibleMoves = (LocationID *)(malloc(sizeof(LocationID)*NUM_MAP_LOCATIONS));
 	char *move;
@@ -136,14 +133,15 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 	possibleMoves = whereCanIgo(hv, numLocations, TRUE, TRUE, TRUE);
 
 		//get current locationsID of hunters
-	int currLoc = getCurrLoc(hv, player);
+	currLoc = whereIs(hv, player);
+	printf("currLoc =  %s\n", idToAbbrev(currLoc));
 
 		// set an initial move as the current location
 	move = idToAbbrev(currLoc);
 
 	for (i = 0; i < n; i++) {
 
-		if ( possibleMoves[i] != UNKNOWN_LOCATION && possibleMoves[i] != currLoc
+		if ( isValidLoc(possibleMoves[i]) && possibleMoves[i] != currLoc
 						 && visited[i] == FALSE ) {
 			move = idToAbbrev(possibleMoves[i]);
 			visited[i] = TRUE;
@@ -166,7 +164,7 @@ void mapSearch(HunterView hv , int roundMod , int player) {
 void restHunter(HunterView hv, int hunterID) {
 		char *restingLoc = idToAbbrev(whereIs(hv, hunterID));
 		if (DEBUGGING) printf("resting at %s\n",restingLoc);
-		registerBestPlay( restingLoc, "ZzzzZzzz");
+		registerBestPlay(restingLoc, "ZzzzZzzz");
 }
 
 
@@ -191,13 +189,16 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 	// create a Map representaton of europe
 	Map map = newMap(); 
 
-	int src = getCurrLoc(hv,player);
+	currLoc = whereIs(hv, player);
+
+		printf("currLoc =  %s\n", idToAbbrev(currLoc));
 	LocationID *pathToDrac;
 	int len;
 	int *pathLength = &len;
 	//find the shortest path to get the current hunter to dracula
 
-	pathToDrac = getShortestPath(map,src,dracFoundLoc,pathLength);
+	pathToDrac = getShortestPath(map,currLoc,dracFoundLoc,pathLength);
+
 
 	if ( len > 0 ) { // if path array is not empty
 		if (DEBUGGING) {
@@ -209,7 +210,7 @@ void attack(HunterView hv, LocationID dracFoundLoc, PlayerID player , int roundM
 
 		// see if we can do rail multi move
 		i = 0; int fasterMove = FALSE;
-		 // reading the path from the closest place to destination down to 1 place before src
+		 // reading the path from the closest place to destination down to 1 place before currLoc
 		puts("");
 		for ( j = len-1; j > 0; j-- ) {
 			i=0;
@@ -238,6 +239,18 @@ int isValidLoc(int locID) {
 	if ( locID >= 0 && locID <= 70 ) return 1;
 	return 0;
 }
+/*
+// send Hunters to cities aroud the location dracula was found in
+LocationID whereShallIgo(HunterView hv, PlayerID player, LocationID dracFoundLoc,) {
+	
+}
+*/
+
+// takes locationID and returns 1 if it is valid location
+int isValidLoc(int locID) {
+	if ( locID >= 0 && locID <= 70 ) return 1;
+	return 0;
+}
 
 // returns true if dractrail is valid i.e not -1
 int isValidTrail(int trail) {
@@ -256,7 +269,9 @@ int isValueInArray(int val, int *arr, int size){
 }
 
 // find a path between two locations using breadth-first traversal
-LocationID *getShortestPath(Map map, LocationID src, LocationID dest, int *numEdges) {
+
+LocationID *getShortestPath(Map map, LocationID currLoc, LocationID dest, int *numEdges) {
+
 	assert(map != NULL);
 	int numOfNeighbers; // number of neighbors
 	int *numLocs = &numOfNeighbers;
@@ -267,7 +282,7 @@ LocationID *getShortestPath(Map map, LocationID src, LocationID dest, int *numEd
 
 	assert(map != NULL);
 
- 	if (DEBUGGING) printf("Finding path from %s %s..\n",idToAbbrev(src) ,idToAbbrev(dest));
+ 	if (DEBUGGING) printf("Finding path from %s %s..\n",idToAbbrev(currLoc) ,idToAbbrev(dest));
 
  	LocationID *path = malloc(NUM_MAP_LOCATIONS * sizeof(LocationID)); 
 
@@ -279,16 +294,17 @@ LocationID *getShortestPath(Map map, LocationID src, LocationID dest, int *numEd
 		dist[i] = 0;
 	}
 
-	visited[src] = TRUE;
-	Queue q = newQueue(); 
-	QueueJoin(q, src);
 
-	// traverse thru the map looking for dest & skipping visited locations
-	LocationID v, curr = src;
+	visited[currLoc] = TRUE;
+	Queue q = newQueue(); 
+	QueueJoin(q, currLoc);
+
+	// traverse thru the map looking for destination & skipping visited locations
+	LocationID v, curr = currLoc;
 	while (!QueueIsEmpty(q)) {
 		curr = QueueLeave(q);
 		// get the neighbor locations of current location
-		neighbors = reachableLocations(map, numLocs, curr, PLAYER_DRACULA, TRUE, TRUE, TRUE);
+		neighbors = reachableLocations(map, numLocs, curr, TRUE, TRUE, TRUE, TRUE);
 		visited[curr] = TRUE;
 		// iterate thru the neighbors
  		for (i=0; i < numOfNeighbers; i++) {
@@ -303,7 +319,7 @@ LocationID *getShortestPath(Map map, LocationID src, LocationID dest, int *numEd
 			int length = dist[curr]-1;
 			//fill up the array starting from highest index
 	    	path[dist[curr]] = '\0';
-	        for (v = dest; v != src ; v = pred[v] ) path[length--] = v;
+	        for (v = dest; v != currLoc ; v = pred[v] ) path[length--] = v;
 	        dropQueue(q);
 	        *numEdges =  dist[dest];	
 	        return path;
